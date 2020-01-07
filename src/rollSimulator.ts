@@ -149,15 +149,18 @@ export const calculateProbability = (
     return null;
   }
 
+  const skillResolver = resolveDiceTotals('s');
+  const ringResolver = resolveDiceTotals('r');
+
   const simulationPool = Array.from({ length: allowedSampleSize }, () => {
     const ringDices = Array.from({ length: numR }, () =>
-      resolveDiceTotals('r')(sample(ringDice) as Roll, [0, 0, 0])
+      skillResolver(sample(ringDice) as Roll, [0, 0, 0])
     );
-    const skillDices = Array.from({ length: numR }, () =>
-      resolveDiceTotals('s')(sample(ringDice) as Roll, [0, 0, 0])
+    const skillDices = Array.from({ length: numS }, () =>
+      ringResolver(sample(ringDice) as Roll, [0, 0, 0])
     );
 
-    return ringDices.concat(skillDices);
+    return [...ringDices, ...skillDices];
   });
 
   const strife: number[] = [];
