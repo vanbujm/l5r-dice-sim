@@ -182,15 +182,20 @@ export const AverageRoll = () => {
             </Button>
             <Box style={{ marginTop: '1rem' }}>
               <Divider />
-              <Typography variant="body1">
-                Success chance: {(result.probability * 100).toFixed(2)}%
-              </Typography>
-              <Typography variant="body1">
-                Average strife: {result.averageStrife.toFixed(2)}
-              </Typography>
-              <Typography variant="body2">
-                Sample Size: {Math.round(result.sampleSize)}
-              </Typography>
+              <Box style={{ marginTop: '1rem' }}>
+                <Typography variant="body1">
+                  Success chance: {(result.probability * 100).toFixed(2)}%
+                </Typography>
+                <Typography variant="body1">
+                  Average strife: {result.averageStrife.toFixed(2)}
+                </Typography>
+                <Typography variant="body2">
+                  Sample Size:{' '}
+                  {new Intl.NumberFormat('en').format(
+                    Math.round(result.sampleSize)
+                  )}
+                </Typography>
+              </Box>
             </Box>
           </>
         ) : null}

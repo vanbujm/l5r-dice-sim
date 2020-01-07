@@ -12,7 +12,7 @@ const App: React.FC = () => {
         <Container maxWidth="sm">
           <SimulateRoll />
           <AverageRoll />
-        </Container >
+        </Container>
       </main>
     </>
   );

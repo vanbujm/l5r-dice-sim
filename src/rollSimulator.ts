@@ -28,8 +28,6 @@ const skillDice: Roll[] = [
   [0, 0, 1, false, 'whiteo.png']
 ];
 
-const SAMPLE_SIZE = 10000;
-
 export interface RollResult {
   success: number;
   strife: number;
@@ -163,9 +161,14 @@ export const calculateProbability = (
     isPassableRoll(tn, to, numR, strife)
   );
 
+  const averageStrife =
+    strife.length > 0
+      ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
+      : 0;
+
   return {
     sampleSize: allowedSampleSize,
     probability: successfulRolls.length / allowedSampleSize,
-    averageStrife: strife.reduce((acc, numS) => acc + numS, 0) / strife.length
+    averageStrife
   };
 };
