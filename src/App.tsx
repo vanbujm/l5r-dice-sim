@@ -9,10 +9,10 @@ const App: React.FC = () => {
     <>
       <Nav />
       <main>
-        <Container>
+        <Container maxWidth="sm">
           <SimulateRoll />
           <AverageRoll />
-        </Container>
+        </Container >
       </main>
     </>
   );
