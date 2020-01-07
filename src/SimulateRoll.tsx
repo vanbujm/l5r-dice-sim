@@ -5,11 +5,11 @@ import {
   Card,
   CardContent,
   Divider,
-  TextField,
   Typography
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { rollDice, RollResult } from './rollSimulator';
+import { AppTextField } from './AppTextField';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -120,27 +120,27 @@ export const SimulateRoll = () => {
           Simulate Roll
         </Typography>
         <InputSection>
-          <TextField
-            id="skill-dice"
+          <AppTextField
+            id="simulate-skill-dice"
             label="Skill Dice"
             type="number"
             InputLabelProps={{
               shrink: true
             }}
             value={skillDice}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
             }
           />
-          <TextField
-            id="ring-dice"
+          <AppTextField
+            id="simulate-ring-dice"
             label="Ring Dice"
             type="number"
             InputLabelProps={{
               shrink: true
             }}
             value={ringDice}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
             }
           />

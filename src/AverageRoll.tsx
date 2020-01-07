@@ -6,12 +6,12 @@ import {
   CardContent,
   Divider,
   Snackbar,
-  TextField,
   Typography
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { calculateProbability, ProbabilityResult } from './rollSimulator';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import { AppTextField } from './AppTextField';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -102,8 +102,14 @@ export const AverageRoll = () => {
         onClose={() => dispatch({ type: CLEAR })}
         message="Simulation too difficult"
       >
-        <Alert severity="error" variant="filled">
-          <AlertTitle>Simulation too difficult!</AlertTitle>
+        <Alert
+          severity="error"
+          variant="filled"
+          style={{ backgroundColor: '#E5170B' }}
+        >
+          <AlertTitle>
+            Simulation too difficult!
+          </AlertTitle>
           Try again with smaller numbers.
         </Alert>
       </Snackbar>
@@ -112,19 +118,19 @@ export const AverageRoll = () => {
           Calculate chances
         </Typography>
         <InputSection>
-          <TextField
-            id="skill-dice"
+          <AppTextField
+            id="average-skill-dice"
             label="Skill Dice"
             type="number"
             InputLabelProps={{
               shrink: true
             }}
             value={skillDice}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
             }
           />
-          <TextField
+          <AppTextField
             id="ring-dice"
             label="Ring Dice"
             type="number"
@@ -132,25 +138,25 @@ export const AverageRoll = () => {
               shrink: true
             }}
             value={ringDice}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
             }
           />
         </InputSection>
         <InputSection>
-          <TextField
-            id="target-number"
+          <AppTextField
+            id="average-target-number"
             label="Target Success"
             type="number"
             InputLabelProps={{
               shrink: true
             }}
             value={tn}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_TN, payload: inputHandler(e) })
             }
           />
-          <TextField
+          <AppTextField
             id="target-opportunity"
             label="Target Opportunity"
             type="number"
@@ -158,7 +164,7 @@ export const AverageRoll = () => {
               shrink: true
             }}
             value={to}
-            onChange={e =>
+            onChange={(e: any) =>
               dispatch({ type: UPDATE_TO, payload: inputHandler(e) })
             }
           />

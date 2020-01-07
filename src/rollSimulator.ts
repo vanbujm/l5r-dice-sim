@@ -108,6 +108,7 @@ const isPassableRoll = (
         strife.push(strifeNum);
         return true;
       }
+      return false;
     });
   };
 };
@@ -137,12 +138,16 @@ export const calculateProbability = (
 ): ProbabilityResult | null => {
   const types = numS + numR;
   const combinationsPerRoll = numCombinations(types, numR);
+
   const allowedSampleSize = Math.min(
     Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll),
     500_000
   );
 
-  if (allowedSampleSize < 1) return null;
+  if (allowedSampleSize < 1 || Number.isNaN(combinationsPerRoll)) {
+    console.error('numbers are too big');
+    return null;
+  }
 
   const simulationPool = Array.from({ length: allowedSampleSize }, () => {
     const ringDices = Array.from({ length: numR }, () =>
