@@ -9,7 +9,7 @@ import {
   Typography
 } from '@material-ui/core';
 import styled from 'styled-components';
-import { rollDice, RollResult } from './rollSimulator';
+import { calculateProbability, ProbabilityResult } from './rollSimulator';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -17,17 +17,25 @@ const InputSection = styled(Box)`
 
 const UPDATE_SKILL_DICE = 'updateSkillDice';
 const UPDATE_RING_DICE = 'updateRingDice';
+const UPDATE_TN = 'updateTargetNumber';
+const UPDATE_TO = 'updateTargetOpportunity';
 const SIMULATE = 'simulate';
 const CLEAR = 'clear';
 
-type ActionType = 'updateSkillDice' | 'updateRingDice' | 'simulate' | 'clear';
-
-interface Result {}
+type ActionType =
+  | 'updateSkillDice'
+  | 'updateRingDice'
+  | 'simulate'
+  | 'clear'
+  | 'updateTargetNumber'
+  | 'updateTargetOpportunity';
 
 interface SimulationState {
   skillDice: number;
   ringDice: number;
-  result: Result | null;
+  to: number;
+  tn: number;
+  result: ProbabilityResult | null;
 }
 
 interface SimulationAction {
@@ -38,11 +46,9 @@ interface SimulationAction {
 const initialState: SimulationState = {
   skillDice: 0,
   ringDice: 0,
+  tn: 0,
+  to: 0,
   result: null
-};
-
-const simulateRoll = (skillDice: number, ringDice: number): Result => {
-  return rollDice(skillDice, ringDice);
 };
 
 const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
@@ -53,10 +59,21 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
     case UPDATE_RING_DICE:
       if (action.payload === undefined) throw new Error('Missing payload');
       return { ...state, ringDice: action.payload };
+    case UPDATE_TN:
+      if (action.payload === undefined) throw new Error('Missing payload');
+      return { ...state, tn: action.payload };
+    case UPDATE_TO:
+      if (action.payload === undefined) throw new Error('Missing payload');
+      return { ...state, to: action.payload };
     case SIMULATE:
       return {
         ...state,
-        result: simulateRoll(Number(state.ringDice), Number(state.skillDice))
+        result: calculateProbability(
+          Number(state.ringDice),
+          Number(state.skillDice),
+          Number(state.tn),
+          Number(state.to)
+        )
       };
     case CLEAR:
       return { ...state, result: null };
@@ -69,46 +86,8 @@ const inputHandler = (e: any) => {
   return e.target.value;
 };
 
-export interface ResultsProps {
-  skillDices: any;
-  ringDices: any;
-}
-
-const FormattedRoll = ({ roll: { image } }: { roll: RollResult }) => (
-  <img
-    src={`dice/${image}`}
-    alt="l5r dice"
-    style={{ width: '3rem', height: '3rem', margin: '0 0.25rem' }}
-  />
-);
-
-const rollResultMapper = (type: string) => (
-  rollArr: RollResult[][],
-  index: number
-) => {
-  return (
-    <InputSection key={`${type}${index + 1}`}>
-      {rollArr.map((roll: RollResult[], index2) => (
-        <FormattedRoll roll={roll as any} key={`roll${index}:${index2}`} />
-      ))}
-    </InputSection>
-  );
-};
-
-export const Results: React.FC<ResultsProps> = ({ skillDices, ringDices }) => {
-  const FormattedSkillDice = skillDices.map(rollResultMapper('skillRoll'));
-  const FormattedRingDice = ringDices.map(rollResultMapper('ringRoll'));
-
-  return (
-    <>
-      {FormattedSkillDice}
-      {FormattedRingDice}
-    </>
-  );
-};
-
-export const SimulateRoll = () => {
-  const [{ skillDice, ringDice, result }, dispatch] = useReducer(
+export const AverageRoll = () => {
+  const [{ skillDice, ringDice, result, tn, to }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -117,7 +96,7 @@ export const SimulateRoll = () => {
     <Card style={{ marginTop: '1rem' }}>
       <CardContent>
         <Typography variant="h5" component="h1">
-          Simulate Roll
+          Calculate chances
         </Typography>
         <InputSection>
           <TextField
@@ -145,6 +124,32 @@ export const SimulateRoll = () => {
             }
           />
         </InputSection>
+        <InputSection>
+          <TextField
+            id="target-number"
+            label="Target Success"
+            type="number"
+            InputLabelProps={{
+              shrink: true
+            }}
+            value={tn}
+            onChange={e =>
+              dispatch({ type: UPDATE_TN, payload: inputHandler(e) })
+            }
+          />
+          <TextField
+            id="target-opportunity"
+            label="Target Opportunity"
+            type="number"
+            InputLabelProps={{
+              shrink: true
+            }}
+            value={to}
+            onChange={e =>
+              dispatch({ type: UPDATE_TO, payload: inputHandler(e) })
+            }
+          />
+        </InputSection>
         <Button
           variant="contained"
           color="primary"
@@ -164,7 +169,12 @@ export const SimulateRoll = () => {
             </Button>
             <Box style={{ marginTop: '1rem' }}>
               <Divider />
-              <Results {...(result as ResultsProps)} />
+              <Typography variant="body1">
+                Success chance: {Math.round(result.probability * 100)}%
+              </Typography>
+              <Typography variant="body1">
+                Average strife: {Math.round(result.averageStrife)}
+              </Typography>
             </Box>
           </>
         ) : null}

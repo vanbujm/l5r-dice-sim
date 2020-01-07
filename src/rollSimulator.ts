@@ -1,4 +1,5 @@
 import { sample } from 'lodash';
+import { combinations } from './combitronics';
 
 export type Roll = [number, number, number, boolean, string];
 
@@ -27,7 +28,7 @@ const skillDice: Roll[] = [
   [0, 0, 1, false, 'whiteo.png']
 ];
 
-const SAMPLE_SIZE = 1000000;
+const SAMPLE_SIZE = 10000;
 
 export interface RollResult {
   success: number;
@@ -56,6 +57,27 @@ const resolveDie = (type: RollType) => ([
   return [roll, resolveDie(type)(newRoll)];
 };
 
+const sumMapper = (array2: number[]) => (value: number, index: number) =>
+  value + array2[index];
+
+type ResultTotals = [number, number, number];
+
+const resolveDiceTotals = (type: RollType) => (
+  [success, strife, opportunity, explode, image]: Roll,
+  totals: ResultTotals
+): ResultTotals => {
+  const newTotal = totals.map(
+    sumMapper([success, strife, opportunity])
+  ) as ResultTotals;
+  if (!explode) return newTotal;
+
+  const newRoll = (type === 'r'
+    ? sample<Roll>(ringDice)
+    : sample<Roll>(skillDice)) as Roll;
+
+  return resolveDiceTotals(type)(newRoll, newTotal);
+};
+
 export const rollDice = (numR: number, numS: number) => {
   const ringDices = Array.from({ length: numR }, () =>
     sample(ringDice)
@@ -70,35 +92,58 @@ export const rollDice = (numR: number, numS: number) => {
   };
 };
 
-// const averageRoll = (numR: number, numS: number) => {
-//   const rolls = Array.from({ length: SAMPLE_SIZE }, () => rollDice(numR, numS));
-//   const totalResults = rolls.reduce(
-//     (acc, arg) => {
-//       const { successes, strife, oppertunity } = arg;
-//       acc.successes += successes;
-//       acc.strife += strife;
-//       acc.oppertunity += oppertunity;
-//       return acc;
-//     },
-//     { successes: 0, strife: 0, oppertunity: 0 }
-//   );
-//
-//   totalResults.successes /= SAMPLE_SIZE;
-//   totalResults.strife /= SAMPLE_SIZE;
-//   totalResults.oppertunity /= SAMPLE_SIZE;
-//   console.log(totalResults);
-// };
+const sumReducer = (index: number) => (acc: number, values: number[]) =>
+  acc + values[index];
 
-// ring die
-// {
-//     avgSuccesses: 0.5999522,
-//     avgStrife: 0.6001105,
-//     avgOppertunity: 0.3999953
-// }
+const isPassableRoll = (
+  tn: number,
+  to: number,
+  keep: number,
+  strife: number[]
+) => {
+  return (completeRoll: ResultTotals[]) => {
+    return combinations(completeRoll, keep).some(combinationArray => {
+      const successNum = combinationArray.reduce(sumReducer(0), 0);
+      const strifeNum = combinationArray.reduce(sumReducer(1), 0);
+      const opportunityNum = combinationArray.reduce(sumReducer(2), 0);
+      if (successNum >= tn && opportunityNum >= to) {
+        strife.push(strifeNum);
+        return true;
+      }
+    });
+  };
+};
 
-// skill die
-// {
-//     avgSuccesses: 0.6999872,
-//     avgStrife: 0.2997658,
-//     avgOppertunity: 0.4000546
-// }
+export interface ProbabilityResult {
+  probability: number;
+  averageStrife: number;
+}
+
+export const calculateProbability = (
+  numR: number,
+  numS: number,
+  tn: number,
+  to: number
+): ProbabilityResult => {
+  const simulationPool = Array.from({ length: SAMPLE_SIZE }, () => {
+    const ringDices = Array.from({ length: numR }, () =>
+      resolveDiceTotals('r')(sample(ringDice) as Roll, [0, 0, 0])
+    );
+    const skillDices = Array.from({ length: numR }, () =>
+      resolveDiceTotals('s')(sample(ringDice) as Roll, [0, 0, 0])
+    );
+
+    return ringDices.concat(skillDices);
+  });
+
+  const strife: number[] = [];
+
+  const successfulRolls = simulationPool.filter(
+    isPassableRoll(tn, to, numR, strife)
+  );
+
+  return {
+    probability: successfulRolls.length / SAMPLE_SIZE,
+    averageStrife: strife.reduce((acc, numS) => acc + numS, 0) / strife.length
+  };
+};
