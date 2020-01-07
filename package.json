@@ -51,5 +51,8 @@
     "eslint-plugin-react-app": "^6.1.0",
     "prettier": "^1.19.1",
     "react-axe": "^3.3.0"
+  },
+  "resolutions": {
+    "serialize-javascript": "^2.1.1"
   }
 }
