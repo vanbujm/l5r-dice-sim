@@ -115,17 +115,38 @@ const isPassableRoll = (
 };
 
 export interface ProbabilityResult {
+  sampleSize: number;
   probability: number;
   averageStrife: number;
 }
+
+const factorial = (num: number) => {
+  let rval = 1;
+  for (let i = 2; i <= num; i++) rval = rval * i;
+  return rval;
+};
+
+const numCombinations = (types: number, choose: number) =>
+  factorial(types + choose - 1) / (factorial(choose) * factorial(types - 1));
+
+const MAX_SIMULATION_NUMBER = 100_000_000;
 
 export const calculateProbability = (
   numR: number,
   numS: number,
   tn: number,
   to: number
-): ProbabilityResult => {
-  const simulationPool = Array.from({ length: SAMPLE_SIZE }, () => {
+): ProbabilityResult | null => {
+  const types = numS + numR;
+  const combinationsPerRoll = numCombinations(types, numR);
+  const allowedSampleSize = Math.min(
+    Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll),
+    500_000
+  );
+
+  if (allowedSampleSize < 1) return null;
+
+  const simulationPool = Array.from({ length: allowedSampleSize }, () => {
     const ringDices = Array.from({ length: numR }, () =>
       resolveDiceTotals('r')(sample(ringDice) as Roll, [0, 0, 0])
     );
@@ -143,7 +164,8 @@ export const calculateProbability = (
   );
 
   return {
-    probability: successfulRolls.length / SAMPLE_SIZE,
+    sampleSize: allowedSampleSize,
+    probability: successfulRolls.length / allowedSampleSize,
     averageStrife: strife.reduce((acc, numS) => acc + numS, 0) / strife.length
   };
 };

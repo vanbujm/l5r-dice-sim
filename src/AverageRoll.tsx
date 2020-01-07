@@ -5,11 +5,13 @@ import {
   Card,
   CardContent,
   Divider,
+  Snackbar,
   TextField,
   Typography
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { calculateProbability, ProbabilityResult } from './rollSimulator';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -35,7 +37,7 @@ interface SimulationState {
   ringDice: number;
   to: number;
   tn: number;
-  result: ProbabilityResult | null;
+  result: ProbabilityResult | null | undefined;
 }
 
 interface SimulationAction {
@@ -48,7 +50,7 @@ const initialState: SimulationState = {
   ringDice: 0,
   tn: 0,
   to: 0,
-  result: null
+  result: undefined
 };
 
 const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
@@ -76,7 +78,7 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
         )
       };
     case CLEAR:
-      return { ...state, result: null };
+      return { ...state, result: undefined };
     default:
       throw new Error('Unknown action');
   }
@@ -94,6 +96,17 @@ export const AverageRoll = () => {
 
   return (
     <Card style={{ marginTop: '1rem' }}>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={result === null}
+        onClose={() => dispatch({ type: CLEAR })}
+        message="Simulation too difficult"
+      >
+        <Alert severity="error" variant="filled">
+          <AlertTitle>Simulation too difficult!</AlertTitle>
+          Try again with smaller numbers.
+        </Alert>
+      </Snackbar>
       <CardContent>
         <Typography variant="h5" component="h1">
           Calculate chances
@@ -157,7 +170,7 @@ export const AverageRoll = () => {
         >
           Simulate
         </Button>
-        {result !== null ? (
+        {result != null ? (
           <>
             <Button
               variant="contained"
@@ -170,10 +183,13 @@ export const AverageRoll = () => {
             <Box style={{ marginTop: '1rem' }}>
               <Divider />
               <Typography variant="body1">
-                Success chance: {Math.round(result.probability * 100)}%
+                Success chance: {(result.probability * 100).toFixed(2)}%
               </Typography>
               <Typography variant="body1">
-                Average strife: {Math.round(result.averageStrife)}
+                Average strife: {result.averageStrife.toFixed(2)}
+              </Typography>
+              <Typography variant="body2">
+                Sample Size: {Math.round(result.sampleSize)}
               </Typography>
             </Box>
           </>
