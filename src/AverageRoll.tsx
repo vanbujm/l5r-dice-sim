@@ -121,7 +121,7 @@ export const AverageRoll = () => {
       </Snackbar>
       <CardContent>
         <Typography variant="h5" component="h1">
-          Calculate chances
+          Calculate Chances
         </Typography>
         <InputSection>
           <AppTextField
