@@ -154,7 +154,6 @@ export const calculateProbability = ({
   tn,
   to
 }: ICalculateProbability): ProbabilityResult | null => {
-  console.log(maxStrife);
   const types = skillDice + ringDice;
   const combinationsPerRoll = numCombinations(types, ringDice);
 
