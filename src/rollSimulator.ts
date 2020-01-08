@@ -4,7 +4,7 @@ import { combinations } from './combitronics';
 export type Roll = [number, number, number, boolean, string];
 
 // succ, strif, opp
-const ringDice: Roll[] = [
+const ringDiceOptions: Roll[] = [
   [0, 0, 0, false, 'black.png'],
   [1, 0, 0, false, 'blacks.png'],
   [1, 1, 0, false, 'blackst.png'],
@@ -13,7 +13,7 @@ const ringDice: Roll[] = [
   [0, 1, 1, false, 'blackot.png']
 ];
 
-const skillDice: Roll[] = [
+const skillDiceOptions: Roll[] = [
   [0, 0, 0, false, 'white.png'],
   [0, 0, 0, false, 'white.png'],
   [1, 0, 0, false, 'whites.png'],
@@ -49,8 +49,8 @@ const resolveDie = (type: RollType) => ([
   if (!explode) return roll;
 
   const newRoll = (type === 'r'
-    ? sample<Roll>(ringDice)
-    : sample<Roll>(skillDice)) as Roll;
+    ? sample<Roll>(ringDiceOptions)
+    : sample<Roll>(skillDiceOptions)) as Roll;
 
   return [roll, resolveDie(type)(newRoll)];
 };
@@ -70,18 +70,18 @@ const resolveDiceTotals = (type: RollType) => (
   if (!explode) return newTotal;
 
   const newRoll = (type === 'r'
-    ? sample<Roll>(ringDice)
-    : sample<Roll>(skillDice)) as Roll;
+    ? sample<Roll>(ringDiceOptions)
+    : sample<Roll>(skillDiceOptions)) as Roll;
 
   return resolveDiceTotals(type)(newRoll, newTotal);
 };
 
 export const rollDice = (numR: number, numS: number) => {
   const ringDices = Array.from({ length: numR }, () =>
-    sample(ringDice)
+    sample(ringDiceOptions)
   ).map(dice => [resolveDie('r')(dice as any)].flat(Infinity));
   const skillDices = Array.from({ length: numS }, () =>
-    sample(skillDice)
+    sample(skillDiceOptions)
   ).map(dice => [resolveDie('s')(dice as any)].flat(Infinity));
 
   return {
@@ -93,18 +93,27 @@ export const rollDice = (numR: number, numS: number) => {
 const sumReducer = (index: number) => (acc: number, values: number[]) =>
   acc + values[index];
 
-const isPassableRoll = (
-  tn: number,
-  to: number,
-  keep: number,
-  strife: number[]
-) => {
+interface IIsPassableRoll {
+  tn: number;
+  to: number;
+  keep: number;
+  strife: number[];
+  maxStrife: number;
+}
+
+const isPassableRoll = ({
+  tn,
+  to,
+  keep,
+  strife,
+  maxStrife
+}: IIsPassableRoll) => {
   return (completeRoll: ResultTotals[]) => {
     return combinations(completeRoll, keep).some(combinationArray => {
       const successNum = combinationArray.reduce(sumReducer(0), 0);
       const strifeNum = combinationArray.reduce(sumReducer(1), 0);
       const opportunityNum = combinationArray.reduce(sumReducer(2), 0);
-      if (successNum >= tn && opportunityNum >= to) {
+      if (successNum >= tn && opportunityNum >= to && strifeNum <= maxStrife) {
         strife.push(strifeNum);
         return true;
       }
@@ -130,14 +139,24 @@ const numCombinations = (types: number, choose: number) =>
 
 const MAX_SIMULATION_NUMBER = 100_000_000;
 
-export const calculateProbability = (
-  numR: number,
-  numS: number,
-  tn: number,
-  to: number
-): ProbabilityResult | null => {
-  const types = numS + numR;
-  const combinationsPerRoll = numCombinations(types, numR);
+interface ICalculateProbability {
+  ringDice: number;
+  skillDice: number;
+  maxStrife: number;
+  tn: number;
+  to: number;
+}
+
+export const calculateProbability = ({
+  ringDice,
+  skillDice,
+  maxStrife,
+  tn,
+  to
+}: ICalculateProbability): ProbabilityResult | null => {
+  console.log(maxStrife);
+  const types = skillDice + ringDice;
+  const combinationsPerRoll = numCombinations(types, ringDice);
 
   const allowedSampleSize = Math.min(
     Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll),
@@ -153,11 +172,11 @@ export const calculateProbability = (
   const ringResolver = resolveDiceTotals('r');
 
   const simulationPool = Array.from({ length: allowedSampleSize }, () => {
-    const ringDices = Array.from({ length: numR }, () =>
-      skillResolver(sample(ringDice) as Roll, [0, 0, 0])
+    const ringDices = Array.from({ length: ringDice }, () =>
+      skillResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
     );
-    const skillDices = Array.from({ length: numS }, () =>
-      ringResolver(sample(ringDice) as Roll, [0, 0, 0])
+    const skillDices = Array.from({ length: skillDice }, () =>
+      ringResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
     );
 
     return [...ringDices, ...skillDices];
@@ -166,7 +185,7 @@ export const calculateProbability = (
   const strife: number[] = [];
 
   const successfulRolls = simulationPool.filter(
-    isPassableRoll(tn, to, numR, strife)
+    isPassableRoll({ tn, to, keep: ringDice, strife, maxStrife })
   );
 
   const averageStrife =

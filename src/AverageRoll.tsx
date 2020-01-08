@@ -19,6 +19,7 @@ const InputSection = styled(Box)`
 
 const UPDATE_SKILL_DICE = 'updateSkillDice';
 const UPDATE_RING_DICE = 'updateRingDice';
+const UPDATE_MAX_STRIFE = 'updateMaxStrife';
 const UPDATE_TN = 'updateTargetNumber';
 const UPDATE_TO = 'updateTargetOpportunity';
 const SIMULATE = 'simulate';
@@ -27,6 +28,7 @@ const CLEAR = 'clear';
 type ActionType =
   | 'updateSkillDice'
   | 'updateRingDice'
+  | 'updateMaxStrife'
   | 'simulate'
   | 'clear'
   | 'updateTargetNumber'
@@ -35,6 +37,7 @@ type ActionType =
 interface SimulationState {
   skillDice: number;
   ringDice: number;
+  maxStrife: number;
   to: number;
   tn: number;
   result: ProbabilityResult | null | undefined;
@@ -48,6 +51,7 @@ interface SimulationAction {
 const initialState: SimulationState = {
   skillDice: 0,
   ringDice: 0,
+  maxStrife: Infinity,
   tn: 0,
   to: 0,
   result: undefined
@@ -61,6 +65,9 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
     case UPDATE_RING_DICE:
       if (action.payload === undefined) throw new Error('Missing payload');
       return { ...state, ringDice: action.payload };
+    case UPDATE_MAX_STRIFE:
+      if (action.payload === undefined) throw new Error('Missing payload');
+      return { ...state, maxStrife: action.payload };
     case UPDATE_TN:
       if (action.payload === undefined) throw new Error('Missing payload');
       return { ...state, tn: action.payload };
@@ -70,12 +77,13 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
     case SIMULATE:
       return {
         ...state,
-        result: calculateProbability(
-          Number(state.ringDice),
-          Number(state.skillDice),
-          Number(state.tn),
-          Number(state.to)
-        )
+        result: calculateProbability({
+          ringDice: Number(state.ringDice),
+          skillDice: Number(state.skillDice),
+          maxStrife: Number(state.maxStrife),
+          tn: Number(state.tn),
+          to: Number(state.to)
+        })
       };
     case CLEAR:
       return { ...state, result: undefined };
@@ -89,7 +97,7 @@ const inputHandler = (e: any) => {
 };
 
 export const AverageRoll = () => {
-  const [{ skillDice, ringDice, result, tn, to }, dispatch] = useReducer(
+  const [{ skillDice, ringDice, result, tn, to, maxStrife }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -107,9 +115,7 @@ export const AverageRoll = () => {
           variant="filled"
           style={{ backgroundColor: '#E5170B' }}
         >
-          <AlertTitle>
-            Simulation too difficult!
-          </AlertTitle>
+          <AlertTitle>Simulation too difficult!</AlertTitle>
           Try again with smaller numbers.
         </Alert>
       </Snackbar>
@@ -166,6 +172,20 @@ export const AverageRoll = () => {
             value={to}
             onChange={(e: any) =>
               dispatch({ type: UPDATE_TO, payload: inputHandler(e) })
+            }
+          />
+        </InputSection>
+        <InputSection>
+          <AppTextField
+            id="maximum-strife"
+            label="Maximum Strife"
+            type="text"
+            InputLabelProps={{
+              shrink: true
+            }}
+            value={maxStrife}
+            onChange={(e: any) =>
+              dispatch({ type: UPDATE_MAX_STRIFE, payload: inputHandler(e) })
             }
           />
         </InputSection>
