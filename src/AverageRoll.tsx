@@ -86,7 +86,7 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
         })
       };
     case CLEAR:
-      return { ...state, result: undefined };
+      return { ...initialState };
     default:
       throw new Error('Unknown action');
   }
@@ -97,10 +97,10 @@ const inputHandler = (e: any) => {
 };
 
 export const AverageRoll = () => {
-  const [{ skillDice, ringDice, result, tn, to, maxStrife }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    { skillDice, ringDice, result, tn, to, maxStrife },
+    dispatch
+  ] = useReducer(reducer, initialState);
 
   return (
     <Card style={{ marginTop: '1rem' }}>
