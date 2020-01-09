@@ -244,9 +244,11 @@ export const calculateProbability = ({
       ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
       : 0;
 
-  return {
+  const result = {
     sampleSize: allowedSampleSize,
     probability: successfulRolls.length / allowedSampleSize,
     averageStrife
   };
+  console.info({ ...result, combinationsPerRoll });
+  return result;
 };
