@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 import { combinations } from './combitronics';
+import { WORKER_TYPE } from './workerTypes';
 
 export type Roll = [number, number, number, boolean, string];
 
@@ -99,6 +100,8 @@ interface IIsPassableRoll {
   keep: number;
   strife: number[];
   maxStrife: number;
+  arrayLength: number;
+  difficultyProportion: number;
 }
 
 const isPassableRoll = ({
@@ -106,9 +109,26 @@ const isPassableRoll = ({
   to,
   keep,
   strife,
-  maxStrife
+  maxStrife,
+  arrayLength,
+  difficultyProportion
 }: IIsPassableRoll) => {
-  return (completeRoll: ResultTotals[]) => {
+  const numPoints = Math.round(difficultyProportion * 100);
+  // @ts-ignore
+  const progressPoints: number[] = [...Array(numPoints).keys()].map(val =>
+    Math.round(((val + 1) / numPoints) * arrayLength)
+  );
+  return (completeRoll: ResultTotals[], index: number, arr: any[]) => {
+    if (progressPoints.includes(index)) {
+      const completionPercentage =
+        (index / arrayLength) * difficultyProportion +
+        (1 - difficultyProportion);
+      // eslint-disable-next-line no-restricted-globals
+      self.postMessage({
+        type: WORKER_TYPE,
+        message: completionPercentage
+      });
+    }
     return combinations(completeRoll, keep).some(combinationArray => {
       const successNum = combinationArray.reduce(sumReducer(0), 0);
       const strifeNum = combinationArray.reduce(sumReducer(1), 0);
@@ -137,7 +157,8 @@ const factorial = (num: number) => {
 const numCombinations = (types: number, choose: number) =>
   factorial(types + choose - 1) / (factorial(choose) * factorial(types - 1));
 
-const MAX_SIMULATION_NUMBER = 100_000_000;
+const MAX_SIMULATION_NUMBER = 10_000_000_000;
+const SMALL_COMB_MAX = 2_000_000;
 
 interface ICalculateProbability {
   ringDice: number;
@@ -157,10 +178,15 @@ export const calculateProbability = ({
   const types = skillDice + ringDice;
   const combinationsPerRoll = numCombinations(types, ringDice);
 
-  const allowedSampleSize = Math.min(
-    Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll),
-    500_000
-  );
+  const bigCombValue = Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll);
+
+  // small comb:
+  // bigCombValue ~massive
+  // big comb:
+  // bigCombValue ~0
+  const allowedSampleSize = Math.min(bigCombValue, SMALL_COMB_MAX);
+
+  const bigCombMode = bigCombValue < SMALL_COMB_MAX;
 
   if (allowedSampleSize < 1 || Number.isNaN(combinationsPerRoll)) {
     console.error('numbers are too big');
@@ -170,23 +196,55 @@ export const calculateProbability = ({
   const skillResolver = resolveDiceTotals('s');
   const ringResolver = resolveDiceTotals('r');
 
-  const simulationPool = Array.from({ length: allowedSampleSize }, () => {
-    const ringDices = Array.from({ length: ringDice }, () =>
-      skillResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
-    );
-    const skillDices = Array.from({ length: skillDice }, () =>
-      ringResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
-    );
+  // @ts-ignore
+  const progressPoints: number[] = [...Array(100).keys()].map(val =>
+    Math.round((val / 100) * allowedSampleSize)
+  );
 
-    return [...ringDices, ...skillDices];
-  });
+  const simulationPoolDifficultyProportion = bigCombMode ? 1 / 10 : 9 / 10;
+
+  const simulationPool = Array.from(
+    { length: allowedSampleSize },
+    (_, index) => {
+      const ringDices = Array.from({ length: ringDice }, () =>
+        skillResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
+      );
+      const skillDices = Array.from({ length: skillDice }, () =>
+        ringResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
+      );
+      if (
+        index === 0 ||
+        progressPoints.includes(index) ||
+        index === allowedSampleSize - 1
+      ) {
+        // eslint-disable-next-line no-restricted-globals
+        self.postMessage({
+          type: WORKER_TYPE,
+          message:
+            (index / allowedSampleSize) * simulationPoolDifficultyProportion
+        });
+      }
+
+      return [...ringDices, ...skillDices];
+    }
+  );
 
   const strife: number[] = [];
 
-  const successfulRolls = simulationPool.filter(
-    isPassableRoll({ tn, to, keep: ringDice, strife, maxStrife })
-  );
+  const isPassableRollDifficultyProportion =
+    1 - simulationPoolDifficultyProportion;
 
+  const successfulRolls = simulationPool.filter(
+    isPassableRoll({
+      tn,
+      to,
+      keep: ringDice,
+      strife,
+      maxStrife,
+      arrayLength: simulationPool.length,
+      difficultyProportion: isPassableRollDifficultyProportion
+    })
+  );
   const averageStrife =
     strife.length > 0
       ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
