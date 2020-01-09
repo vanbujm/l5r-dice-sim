@@ -93,7 +93,7 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
       if (noPayload) throw noPayloadError;
       return { ...state, to: action.payload };
     case REQUEST_CALCULATION:
-      return { ...state, requestCalc: true, loading: true };
+      return { ...state, requestCalc: true, loading: true, result: undefined };
     case UPDATE_CALC_PROGRESS:
       if (noPayload) throw noPayloadError;
       return { ...state, progress: action.payload };

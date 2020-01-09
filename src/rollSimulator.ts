@@ -157,9 +157,6 @@ const factorial = (num: number) => {
 const numCombinations = (types: number, choose: number) =>
   factorial(types + choose - 1) / (factorial(choose) * factorial(types - 1));
 
-const MAX_SIMULATION_NUMBER = 1_000_000_000;
-const SMALL_COMB_MAX = 2_000_000;
-
 interface ICalculateProbability {
   ringDice: number;
   skillDice: number;
