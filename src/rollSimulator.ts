@@ -157,7 +157,7 @@ const factorial = (num: number) => {
 const numCombinations = (types: number, choose: number) =>
   factorial(types + choose - 1) / (factorial(choose) * factorial(types - 1));
 
-const MAX_SIMULATION_NUMBER = 10_000_000_000;
+const MAX_SIMULATION_NUMBER = 1_000_000_000;
 const SMALL_COMB_MAX = 2_000_000;
 
 interface ICalculateProbability {
@@ -178,15 +178,14 @@ export const calculateProbability = ({
   const types = skillDice + ringDice;
   const combinationsPerRoll = numCombinations(types, ringDice);
 
-  const bigCombValue = Math.floor(MAX_SIMULATION_NUMBER / combinationsPerRoll);
+  const xVal = (skillDice + ringDice) / 2;
 
-  // small comb:
-  // bigCombValue ~massive
-  // big comb:
-  // bigCombValue ~0
-  const allowedSampleSize = Math.min(bigCombValue, SMALL_COMB_MAX);
+  // magic from a best fit graph done in excel
+  const exponent = -0.0373 * Math.pow(xVal, 2) + 0.0189 * xVal + 6.2965;
 
-  const bigCombMode = bigCombValue < SMALL_COMB_MAX;
+  const allowedSampleSize = Math.floor(Math.pow(10, exponent));
+
+  console.log(allowedSampleSize);
 
   if (allowedSampleSize < 1 || Number.isNaN(combinationsPerRoll)) {
     console.error('numbers are too big');
@@ -201,7 +200,7 @@ export const calculateProbability = ({
     Math.round((val / 100) * allowedSampleSize)
   );
 
-  const simulationPoolDifficultyProportion = bigCombMode ? 1 / 10 : 9 / 10;
+  const simulationPoolDifficultyProportion = 1 - xVal / (14 * 1.1);
 
   const simulationPool = Array.from(
     { length: allowedSampleSize },
