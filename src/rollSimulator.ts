@@ -185,8 +185,6 @@ export const calculateProbability = ({
 
   const allowedSampleSize = Math.floor(Math.pow(10, exponent));
 
-  console.log(allowedSampleSize);
-
   if (allowedSampleSize < 1 || Number.isNaN(combinationsPerRoll)) {
     console.error('numbers are too big');
     return null;
