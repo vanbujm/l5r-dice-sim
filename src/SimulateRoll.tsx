@@ -1,8 +1,4 @@
-import React, {
-  Dispatch,
-  Reducer,
-  useReducer
-} from 'react';
+import React, { Dispatch, Reducer, useReducer } from 'react';
 import {
   Box,
   Button,
@@ -28,6 +24,9 @@ const HoverableContainer = styled(Box)`
     cursor: pointer;
     box-shadow: 0 0 2px inset black;
     border-radius: 0.25rem;
+  }
+  &:active {
+    box-shadow: 0 0 4px inset black;
   }
 `;
 
