@@ -69,10 +69,8 @@ export const resolveDiceTotals = (type: RollType) => (
   const newTotal = totals.map(
     sumMapper([success, strife, opportunity])
   ) as ResultTotals;
-  if (explode) {
-    explosions.push(1);
-  }
   if (!explode) return newTotal;
+  explosions.push(1);
 
   const newRoll = (type === 'r'
     ? sample<Roll>(ringDiceOptions)
@@ -145,8 +143,10 @@ const isPassableRoll = ({
         strife.push(strifeNum);
         success.push(successNum);
         opportunity.push(opportunityNum);
+        // console.info('keeping', completeRoll, successNum, opportunityNum, strifeNum);
         return true;
       }
+      // console.info('ditching', completeRoll, successNum, opportunityNum, strifeNum);
       return false;
     });
   };
@@ -228,7 +228,7 @@ export const calculateProbability = ({
         return ringResolver(roll, [0, 0, 0], explosions);
       });
       const skillDices = Array.from({ length: skillDice }, () => {
-        const roll = sample(ringDiceOptions) as Roll;
+        const roll = sample(skillDiceOptions) as Roll;
         return skillResolver(roll, [0, 0, 0], explosions);
       });
       if (
