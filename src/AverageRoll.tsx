@@ -149,7 +149,7 @@ const inputHandler = (e: any) => {
 
 const createWorker = () => worker();
 
-const formatter = new Intl.NumberFormat('en');
+const formatter = new Intl.NumberFormat(window.navigator.language);
 
 export const AverageRoll = () => {
   const theme = useTheme();
