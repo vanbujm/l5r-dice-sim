@@ -66,6 +66,7 @@ export const resolveDiceTotals = (type: RollType) => (
   totals: ResultTotals,
   explosions: number[]
 ): ResultTotals => {
+  console.log(`im a ${type} dice`);
   const newTotal = totals.map(
     sumMapper([success, strife, opportunity])
   ) as ResultTotals;
@@ -221,11 +222,11 @@ export const calculateProbability = ({
     (_, index) => {
       const ringDices = Array.from({ length: ringDice }, () => {
         const roll = sample(ringDiceOptions) as Roll;
-        return skillResolver(roll, [0, 0, 0], explosions);
+        return ringResolver(roll, [0, 0, 0], explosions);
       });
       const skillDices = Array.from({ length: skillDice }, () => {
         const roll = sample(ringDiceOptions) as Roll;
-        return ringResolver(roll, [0, 0, 0], explosions);
+        return skillResolver(roll, [0, 0, 0], explosions);
       });
       if (
         index === 0 ||
