@@ -56,25 +56,29 @@ const resolveDie = (type: RollType) => ([
   return [roll, resolveDie(type)(newRoll)];
 };
 
-const sumMapper = (array2: number[]) => (value: number, index: number) =>
+export const sumMapper = (array2: number[]) => (value: number, index: number) =>
   value + array2[index];
 
 type ResultTotals = [number, number, number];
 
-const resolveDiceTotals = (type: RollType) => (
+export const resolveDiceTotals = (type: RollType) => (
   [success, strife, opportunity, explode, image]: Roll,
-  totals: ResultTotals
+  totals: ResultTotals,
+  explosions: number[]
 ): ResultTotals => {
   const newTotal = totals.map(
     sumMapper([success, strife, opportunity])
   ) as ResultTotals;
+  if (explode) {
+    explosions.push(1);
+  }
   if (!explode) return newTotal;
 
   const newRoll = (type === 'r'
     ? sample<Roll>(ringDiceOptions)
     : sample<Roll>(skillDiceOptions)) as Roll;
 
-  return resolveDiceTotals(type)(newRoll, newTotal);
+  return resolveDiceTotals(type)(newRoll, newTotal, explosions);
 };
 
 export const rollDice = (numR: number, numS: number) => {
@@ -209,16 +213,20 @@ export const calculateProbability = ({
 
   const simulationPoolDifficultyProportion = 1 - xVal / (14 * 1.1);
 
+  const explosions: number[] = [];
+
   console.info('Creating Simulation pools');
   const simulationPool = Array.from(
     { length: allowedSampleSize },
     (_, index) => {
-      const ringDices = Array.from({ length: ringDice }, () =>
-        skillResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
-      );
-      const skillDices = Array.from({ length: skillDice }, () =>
-        ringResolver(sample(ringDiceOptions) as Roll, [0, 0, 0])
-      );
+      const ringDices = Array.from({ length: ringDice }, () => {
+        const roll = sample(ringDiceOptions) as Roll;
+        return skillResolver(roll, [0, 0, 0], explosions);
+      });
+      const skillDices = Array.from({ length: skillDice }, () => {
+        const roll = sample(ringDiceOptions) as Roll;
+        return ringResolver(roll, [0, 0, 0], explosions);
+      });
       if (
         index === 0 ||
         progressPoints.includes(index) ||
@@ -272,6 +280,8 @@ export const calculateProbability = ({
       ? opportunity.reduce((acc, numS) => acc + numS, 0) / opportunity.length
       : 0;
 
+  const averageExplosions = explosions.length / allowedSampleSize;
+
   const result = {
     sampleSize: allowedSampleSize,
     probability: successfulRolls.length / allowedSampleSize,
@@ -281,7 +291,8 @@ export const calculateProbability = ({
     ...result,
     combinationsPerRoll,
     averageSuccess,
-    averageOpportunity
+    averageOpportunity,
+    averageExplosions
   });
   return result;
 };
