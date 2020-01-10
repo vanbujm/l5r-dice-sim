@@ -99,6 +99,8 @@ interface IIsPassableRoll {
   to: number;
   keep: number;
   strife: number[];
+  success: number[];
+  opportunity: number[];
   maxStrife: number;
   arrayLength: number;
   difficultyProportion: number;
@@ -109,6 +111,8 @@ const isPassableRoll = ({
   to,
   keep,
   strife,
+  success,
+  opportunity,
   maxStrife,
   arrayLength,
   difficultyProportion
@@ -135,6 +139,8 @@ const isPassableRoll = ({
       const opportunityNum = combinationArray.reduce(sumReducer(2), 0);
       if (successNum >= tn && opportunityNum >= to && strifeNum <= maxStrife) {
         strife.push(strifeNum);
+        success.push(successNum);
+        opportunity.push(opportunityNum);
         return true;
       }
       return false;
@@ -154,8 +160,9 @@ const factorial = (num: number) => {
   return rval;
 };
 
-const numCombinations = (types: number, choose: number) =>
-  factorial(types + choose - 1) / (factorial(choose) * factorial(types - 1));
+const numCombinations = (totalDice: number, keep: number) =>
+  factorial(totalDice + keep - 1) /
+  (factorial(keep) * factorial(totalDice - 1));
 
 interface ICalculateProbability {
   ringDice: number;
@@ -163,6 +170,7 @@ interface ICalculateProbability {
   maxStrife: number;
   tn: number;
   to: number;
+  keep: number;
 }
 
 export const calculateProbability = ({
@@ -170,10 +178,14 @@ export const calculateProbability = ({
   skillDice,
   maxStrife,
   tn,
-  to
+  to,
+  keep
 }: ICalculateProbability): ProbabilityResult | null => {
-  const types = skillDice + ringDice;
-  const combinationsPerRoll = numCombinations(types, ringDice);
+  console.info('Simulation started');
+  console.info({ ringDice, skillDice, maxStrife, tn, to, keep });
+
+  const totalDice = skillDice + ringDice;
+  const combinationsPerRoll = numCombinations(totalDice, keep);
 
   const xVal = (skillDice + ringDice) / 2;
 
@@ -197,6 +209,7 @@ export const calculateProbability = ({
 
   const simulationPoolDifficultyProportion = 1 - xVal / (14 * 1.1);
 
+  console.info('Creating Simulation pools');
   const simulationPool = Array.from(
     { length: allowedSampleSize },
     (_, index) => {
@@ -224,24 +237,39 @@ export const calculateProbability = ({
   );
 
   const strife: number[] = [];
+  const success: number[] = [];
+  const opportunity: number[] = [];
 
   const isPassableRollDifficultyProportion =
     1 - simulationPoolDifficultyProportion;
 
+  console.info('Evaluating for success');
   const successfulRolls = simulationPool.filter(
     isPassableRoll({
       tn,
       to,
-      keep: ringDice,
+      keep,
       strife,
+      success,
+      opportunity,
       maxStrife,
       arrayLength: simulationPool.length,
       difficultyProportion: isPassableRollDifficultyProportion
     })
   );
+
+  console.info('Calculating average strife');
   const averageStrife =
     strife.length > 0
       ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
+      : 0;
+  const averageSuccess =
+    success.length > 0
+      ? success.reduce((acc, numS) => acc + numS, 0) / success.length
+      : 0;
+  const averageOpportunity =
+    opportunity.length > 0
+      ? opportunity.reduce((acc, numS) => acc + numS, 0) / opportunity.length
       : 0;
 
   const result = {
@@ -249,6 +277,11 @@ export const calculateProbability = ({
     probability: successfulRolls.length / allowedSampleSize,
     averageStrife
   };
-  console.info({ ...result, combinationsPerRoll });
+  console.info({
+    ...result,
+    combinationsPerRoll,
+    averageSuccess,
+    averageOpportunity
+  });
   return result;
 };

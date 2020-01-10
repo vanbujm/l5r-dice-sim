@@ -1,6 +1,5 @@
 import React, {
   Dispatch,
-  DispatchWithoutAction,
   Reducer,
   useReducer
 } from 'react';

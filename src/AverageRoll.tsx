@@ -4,7 +4,14 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Divider,
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+  FormControlLabel,
+  FormGroup,
+  Grid,
   LinearProgress,
   Snackbar,
   Typography
@@ -12,6 +19,7 @@ import {
 import styled from 'styled-components';
 import { ProbabilityResult } from './rollSimulator';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import { ExpandMore } from '@material-ui/icons';
 import { AppTextField } from './AppTextField';
 import worker from './ComponentWorkerShim';
 import { WORKER_TYPE } from './workerTypes';
@@ -23,6 +31,8 @@ const InputSection = styled(Box)`
 const UPDATE_SKILL_DICE = 'updateSkillDice';
 const UPDATE_RING_DICE = 'updateRingDice';
 const UPDATE_MAX_STRIFE = 'updateMaxStrife';
+const UPDATE_SKILLED_ASSIST = 'updateSkilledAssist';
+const UPDATE_UNSKILLED_ASSIST = 'updateUnskilledAssist';
 const UPDATE_TN = 'updateTargetNumber';
 const UPDATE_TO = 'updateTargetOpportunity';
 const REQUEST_CALCULATION = 'requestCalculation';
@@ -34,6 +44,8 @@ type ActionType =
   | 'updateSkillDice'
   | 'updateRingDice'
   | 'updateMaxStrife'
+  | 'updateSkilledAssist'
+  | 'updateUnskilledAssist'
   | 'simulate'
   | 'requestCalculation'
   | 'updateCalcProgress'
@@ -46,6 +58,8 @@ interface SimulationState {
   skillDice: number;
   ringDice: number;
   maxStrife: number;
+  skilledAssist: boolean;
+  unskilledAssist: boolean;
   to: number;
   tn: number;
   result: ProbabilityResult | null | undefined;
@@ -56,12 +70,14 @@ interface SimulationState {
 
 interface SimulationAction {
   type: ActionType;
-  payload?: number;
+  payload?: number | boolean;
 }
 
 const initialState: SimulationState = {
   skillDice: 0,
   ringDice: 0,
+  skilledAssist: false,
+  unskilledAssist: false,
   maxStrife: Infinity,
   tn: 0,
   to: 0,
@@ -86,6 +102,12 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
     case UPDATE_MAX_STRIFE:
       if (noPayload) throw noPayloadError;
       return { ...state, maxStrife: action.payload };
+    case UPDATE_SKILLED_ASSIST:
+      if (noPayload) throw noPayloadError;
+      return { ...state, skilledAssist: action.payload };
+    case UPDATE_UNSKILLED_ASSIST:
+      if (noPayload) throw noPayloadError;
+      return { ...state, unskilledAssist: action.payload };
     case UPDATE_TN:
       if (noPayload) throw noPayloadError;
       return { ...state, tn: action.payload };
@@ -134,6 +156,8 @@ export const AverageRoll = () => {
       maxStrife,
       requestCalc,
       loading,
+      skilledAssist,
+      unskilledAssist,
       progress
     },
     dispatch
@@ -155,21 +179,24 @@ export const AverageRoll = () => {
       false
     );
 
-    return () => {
-      // Clean up the subscription
-    };
+    return () => {};
   }, [worker]);
 
   useEffect(() => {
     if (!requestCalc) return;
 
     const calculateProbability = async () => {
+      const keep =
+        Number(ringDice) + (skilledAssist ? 1 : 0) + (unskilledAssist ? 1 : 0);
+      const finalRingDice = Number(ringDice) + (unskilledAssist ? 1 : 0);
+      const finalSkillDice = Number(skillDice) + (skilledAssist ? 1 : 0);
       const data = await worker.calculateProbability({
-        ringDice: Number(ringDice),
-        skillDice: Number(skillDice),
+        ringDice: finalRingDice,
+        skillDice: finalSkillDice,
         maxStrife: Number(maxStrife),
         tn: Number(tn),
-        to: Number(to)
+        to: Number(to),
+        keep
       });
 
       dispatch({ type: SIMULATION_COMPLETE, payload: data });
@@ -177,10 +204,18 @@ export const AverageRoll = () => {
 
     calculateProbability();
 
-    return () => {
-      // Clean up the subscription
-    };
-  }, [maxStrife, requestCalc, ringDice, skillDice, tn, to, worker]);
+    return () => {};
+  }, [
+    maxStrife,
+    requestCalc,
+    ringDice,
+    skillDice,
+    skilledAssist,
+    tn,
+    to,
+    unskilledAssist,
+    worker
+  ]);
 
   return (
     <Card style={{ marginTop: '1rem' }}>
@@ -256,18 +291,68 @@ export const AverageRoll = () => {
           />
         </InputSection>
         <InputSection>
-          <AppTextField
-            id="maximum-strife"
-            label="Maximum Strife"
-            type="text"
-            InputLabelProps={{
-              shrink: true
-            }}
-            value={maxStrife}
-            onChange={(e: any) =>
-              dispatch({ type: UPDATE_MAX_STRIFE, payload: inputHandler(e) })
-            }
-          />
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMore />}
+              aria-controls="advanced-options-panel1"
+              id="advanced-options-panel"
+            >
+              <Typography>Advanced Options</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <AppTextField
+                    id="maximum-strife"
+                    label="Maximum Strife"
+                    type="text"
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    value={maxStrife}
+                    onChange={(e: any) =>
+                      dispatch({
+                        type: UPDATE_MAX_STRIFE,
+                        payload: inputHandler(e)
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={skilledAssist}
+                          onChange={() =>
+                            dispatch({
+                              type: UPDATE_SKILLED_ASSIST,
+                              payload: !skilledAssist
+                            })
+                          }
+                        />
+                      }
+                      label="Skilled Assist"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={unskilledAssist}
+                          onChange={() =>
+                            dispatch({
+                              type: UPDATE_UNSKILLED_ASSIST,
+                              payload: !unskilledAssist
+                            })
+                          }
+                        />
+                      }
+                      label="UnSkilledAssist"
+                    />
+                  </FormGroup>
+                </Grid>
+              </Grid>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
         </InputSection>
         <Button
           variant="contained"
