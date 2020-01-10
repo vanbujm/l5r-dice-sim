@@ -1,6 +1,6 @@
-import {sample} from 'lodash';
-import {combinations} from './combitronics';
-import {WORKER_TYPE} from './workerTypes';
+import { sample } from 'lodash';
+import { combinations } from './combitronics';
+import { WORKER_TYPE } from './workerTypes';
 
 export type Roll = [number, number, number, boolean, string];
 
@@ -286,7 +286,7 @@ export const calculateProbability = ({
 
   const averageExplosions = explosions.length / allowedSampleSize;
 
-  return {
+  const result = {
     sampleSize: allowedSampleSize,
     probability: successfulRolls.length / allowedSampleSize,
     averageStrife,
@@ -295,4 +295,7 @@ export const calculateProbability = ({
     averageOpportunity,
     averageExplosions
   };
+
+  console.info(result);
+  return result;
 };
