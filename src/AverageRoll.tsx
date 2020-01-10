@@ -13,8 +13,15 @@ import {
   FormGroup,
   Grid,
   LinearProgress,
+  Paper,
   Snackbar,
-  Typography
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
+  useTheme
 } from '@material-ui/core';
 import styled from 'styled-components';
 import { ProbabilityResult } from './rollSimulator';
@@ -23,6 +30,7 @@ import { ExpandMore } from '@material-ui/icons';
 import { AppTextField } from './AppTextField';
 import worker from './ComponentWorkerShim';
 import { WORKER_TYPE } from './workerTypes';
+import { lighten, mix } from 'polished';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -141,7 +149,11 @@ const inputHandler = (e: any) => {
 
 const createWorker = () => worker();
 
+const formatter = new Intl.NumberFormat('en');
+
 export const AverageRoll = () => {
+  const theme = useTheme();
+
   const worker = useMemo(createWorker, [createWorker]);
 
   const initialStateWithWorker = { ...initialState };
@@ -384,18 +396,85 @@ export const AverageRoll = () => {
           <Box style={{ marginTop: '1rem' }}>
             <Divider />
             <Box style={{ marginTop: '1rem' }}>
-              <Typography variant="body1">
-                Success chance: {(result.probability * 100).toFixed(2)}%
-              </Typography>
-              <Typography variant="body1">
-                Average strife: {result.averageStrife.toFixed(2)}
-              </Typography>
-              <Typography variant="body2">
-                Sample Size:{' '}
-                {new Intl.NumberFormat('en').format(
-                  Math.round(result.sampleSize)
-                )}
-              </Typography>
+              <TableContainer component={Paper}>
+                <Table size="small" aria-label="a dense table">
+                  <TableBody>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        <span style={{ fontSize: '1.25rem' }}>
+                          Chance of success
+                        </span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span
+                          style={{
+                            fontWeight: 'bold',
+                            fontSize: '1.25rem',
+                            color: lighten(
+                              0.1,
+                              mix(
+                                result.probability,
+                                theme.palette.success.main,
+                                theme.palette.error.main
+                              )
+                            )
+                          }}
+                        >
+                          {(result.probability * 100).toFixed(2)}%
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Average strife
+                      </TableCell>
+                      <TableCell align="right">
+                        {result.averageStrife.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Average successes
+                      </TableCell>
+                      <TableCell align="right">
+                        {result.averageSuccess.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Average opportunity
+                      </TableCell>
+                      <TableCell align="right">
+                        {result.averageOpportunity.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Average explosions
+                      </TableCell>
+                      <TableCell align="right">
+                        {result.averageExplosions.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Number of keep combination per roll
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatter.format(result.combinationsPerRoll)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow hover>
+                      <TableCell component="th" scope="row">
+                        Sample Size
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatter.format(Math.round(result.sampleSize))}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Box>
           </Box>
         ) : null}

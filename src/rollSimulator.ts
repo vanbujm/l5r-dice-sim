@@ -1,6 +1,6 @@
-import { sample } from 'lodash';
-import { combinations } from './combitronics';
-import { WORKER_TYPE } from './workerTypes';
+import {sample} from 'lodash';
+import {combinations} from './combitronics';
+import {WORKER_TYPE} from './workerTypes';
 
 export type Roll = [number, number, number, boolean, string];
 
@@ -66,7 +66,6 @@ export const resolveDiceTotals = (type: RollType) => (
   totals: ResultTotals,
   explosions: number[]
 ): ResultTotals => {
-  console.log(`im a ${type} dice`);
   const newTotal = totals.map(
     sumMapper([success, strife, opportunity])
   ) as ResultTotals;
@@ -157,6 +156,10 @@ export interface ProbabilityResult {
   sampleSize: number;
   probability: number;
   averageStrife: number;
+  averageSuccess: number;
+  averageOpportunity: number;
+  averageExplosions: number;
+  combinationsPerRoll: number;
 }
 
 const factorial = (num: number) => {
@@ -267,7 +270,7 @@ export const calculateProbability = ({
     })
   );
 
-  console.info('Calculating average strife');
+  console.info('Calculating averages');
   const averageStrife =
     strife.length > 0
       ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
@@ -283,17 +286,13 @@ export const calculateProbability = ({
 
   const averageExplosions = explosions.length / allowedSampleSize;
 
-  const result = {
+  return {
     sampleSize: allowedSampleSize,
     probability: successfulRolls.length / allowedSampleSize,
-    averageStrife
-  };
-  console.info({
-    ...result,
+    averageStrife,
     combinationsPerRoll,
     averageSuccess,
     averageOpportunity,
     averageExplosions
-  });
-  return result;
+  };
 };
