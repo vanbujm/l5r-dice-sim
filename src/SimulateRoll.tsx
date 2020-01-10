@@ -1,10 +1,16 @@
-import React, { Reducer, useReducer } from 'react';
+import React, {
+  Dispatch,
+  DispatchWithoutAction,
+  Reducer,
+  useReducer
+} from 'react';
 import {
   Box,
   Button,
   Card,
   CardContent,
   Divider,
+  Tooltip,
   Typography
 } from '@material-ui/core';
 import styled from 'styled-components';
@@ -15,24 +21,39 @@ const InputSection = styled(Box)`
   margin: 1rem 0;
 `;
 
+const HoverableContainer = styled(Box)`
+  margin: 0.25rem 0;
+  padding: 0.75rem 0.25rem;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px inset black;
+    border-radius: 0.25rem;
+  }
+`;
+
 const UPDATE_SKILL_DICE = 'updateSkillDice';
 const UPDATE_RING_DICE = 'updateRingDice';
+const RE_ROLL_DIE = 'rerollDie';
 const SIMULATE = 'simulate';
 const CLEAR = 'clear';
 
-type ActionType = 'updateSkillDice' | 'updateRingDice' | 'simulate' | 'clear';
-
-interface Result {}
+type ActionType =
+  | 'updateSkillDice'
+  | 'updateRingDice'
+  | 'simulate'
+  | 'clear'
+  | 'rerollDie';
 
 interface SimulationState {
   skillDice: number;
   ringDice: number;
-  result: Result | null;
+  result: any | null;
 }
 
 interface SimulationAction {
   type: ActionType;
-  payload?: number;
+  payload?: any;
 }
 
 const initialState: SimulationState = {
@@ -41,7 +62,7 @@ const initialState: SimulationState = {
   result: null
 };
 
-const simulateRoll = (skillDice: number, ringDice: number): Result => {
+const simulateRoll = (skillDice: number, ringDice: number) => {
   return rollDice(skillDice, ringDice);
 };
 
@@ -58,6 +79,18 @@ const reducer: Reducer<SimulationState, SimulationAction> = (state, action) => {
         ...state,
         result: simulateRoll(Number(state.ringDice), Number(state.skillDice))
       };
+    case RE_ROLL_DIE:
+      if (action.payload === undefined) throw new Error('Missing payload');
+      if (state.result === null) return state;
+      const { type, index } = action.payload;
+      const { result } = state;
+      const cloneResult = { ...result };
+      const newRoll =
+        type === 'skillDices'
+          ? rollDice(0, 1).skillDices[0]
+          : rollDice(1, 0).ringDices[0];
+      cloneResult[type].splice(index, 1, newRoll);
+      return { ...state, result: cloneResult };
     case CLEAR:
       return { ...state, result: null };
     default:
@@ -72,6 +105,7 @@ const inputHandler = (e: any) => {
 export interface ResultsProps {
   skillDices: any;
   ringDices: any;
+  dispatch: Dispatch<any>;
 }
 
 const FormattedRoll = ({ roll: { image } }: { roll: RollResult }) => (
@@ -82,22 +116,41 @@ const FormattedRoll = ({ roll: { image } }: { roll: RollResult }) => (
   />
 );
 
-const rollResultMapper = (type: string) => (
+const rollResultMapper = (type: string, dispatch: Dispatch<any>) => (
   rollArr: RollResult[][],
   index: number
 ) => {
   return (
-    <InputSection key={`${type}${index + 1}`}>
-      {rollArr.map((roll: RollResult[], index2) => (
-        <FormattedRoll roll={roll as any} key={`roll${index}:${index2}`} />
-      ))}
-    </InputSection>
+    <Tooltip
+      title="Re-roll"
+      aria-label="re-roll"
+      placement="right"
+      key={`${type}${index + 1}`}
+    >
+      <HoverableContainer
+        onClick={() =>
+          dispatch({ type: RE_ROLL_DIE, payload: { type, index } })
+        }
+      >
+        {rollArr.map((roll: RollResult[], index2) => (
+          <FormattedRoll roll={roll as any} key={`roll${index}:${index2}`} />
+        ))}
+      </HoverableContainer>
+    </Tooltip>
   );
 };
 
-export const Results: React.FC<ResultsProps> = ({ skillDices, ringDices }) => {
-  const FormattedSkillDice = skillDices.map(rollResultMapper('skillRoll'));
-  const FormattedRingDice = ringDices.map(rollResultMapper('ringRoll'));
+export const Results: React.FC<ResultsProps> = ({
+  skillDices,
+  ringDices,
+  dispatch
+}) => {
+  const FormattedSkillDice = skillDices.map(
+    rollResultMapper('skillDices', dispatch)
+  );
+  const FormattedRingDice = ringDices.map(
+    rollResultMapper('ringDices', dispatch)
+  );
 
   return (
     <>
@@ -164,7 +217,7 @@ export const SimulateRoll = () => {
             </Button>
             <Box style={{ marginTop: '1rem' }}>
               <Divider />
-              <Results {...(result as ResultsProps)} />
+              <Results {...(result as ResultsProps)} dispatch={dispatch} />
             </Box>
           </>
         ) : null}
