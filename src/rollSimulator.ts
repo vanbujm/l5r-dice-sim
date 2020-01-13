@@ -93,8 +93,12 @@ export const rollDice = (numR: number, numS: number) => {
   };
 };
 
-const sumReducer = (index: number) => (acc: number, values: number[]) =>
-  acc + values[index];
+const sumReducer = (acc: number[], values: number[]) => {
+  acc[0] += values[0];
+  acc[1] += values[1];
+  acc[2] += values[2];
+  return acc;
+};
 
 interface IIsPassableRoll {
   tn: number;
@@ -104,8 +108,6 @@ interface IIsPassableRoll {
   success: number[];
   opportunity: number[];
   maxStrife: number;
-  arrayLength: number;
-  difficultyProportion: number;
 }
 
 const isPassableRoll = ({
@@ -115,38 +117,35 @@ const isPassableRoll = ({
   strife,
   success,
   opportunity,
-  maxStrife,
-  arrayLength,
-  difficultyProportion
+  maxStrife
 }: IIsPassableRoll) => {
-  const numPoints = Math.round(difficultyProportion * 100);
-  // @ts-ignore
-  const progressPoints: number[] = [...Array(numPoints).keys()].map(val =>
-    Math.round(((val + 1) / numPoints) * arrayLength)
-  );
-  return (completeRoll: ResultTotals[], index: number, arr: any[]) => {
-    if (progressPoints.includes(index)) {
-      const completionPercentage =
-        (index / arrayLength) * difficultyProportion +
-        (1 - difficultyProportion);
-      // eslint-disable-next-line no-restricted-globals
-      self.postMessage({
-        type: WORKER_TYPE,
-        message: completionPercentage
-      });
-    }
+  return (completeRoll: ResultTotals[]) => {
+    const [
+      maxSuccessNum,
+      maxStrifeNum,
+      maxOpportunityNum
+    ] = completeRoll.reduce(sumReducer as any, [0, 0, 0]);
+
+    const cantSucceed = !(
+      maxSuccessNum >= tn &&
+      maxOpportunityNum >= to &&
+      maxStrifeNum <= maxStrife
+    );
+
+    if (cantSucceed) return false;
     return combinations(completeRoll, keep).some(combinationArray => {
-      const successNum = combinationArray.reduce(sumReducer(0), 0);
-      const strifeNum = combinationArray.reduce(sumReducer(1), 0);
-      const opportunityNum = combinationArray.reduce(sumReducer(2), 0);
+      const [
+        successNum,
+        strifeNum,
+        opportunityNum
+      ] = combinationArray.reduce(sumReducer, [0, 0, 0]);
+
       if (successNum >= tn && opportunityNum >= to && strifeNum <= maxStrife) {
         strife.push(strifeNum);
         success.push(successNum);
         opportunity.push(opportunityNum);
-        // console.info('keeping', completeRoll, successNum, opportunityNum, strifeNum);
         return true;
       }
-      // console.info('ditching', completeRoll, successNum, opportunityNum, strifeNum);
       return false;
     });
   };
@@ -215,80 +214,70 @@ export const calculateProbability = ({
     Math.round((val / 100) * allowedSampleSize)
   );
 
-  const simulationPoolDifficultyProportion = 1 - xVal / (14 * 1.1);
-
   const explosions: number[] = [];
 
   console.info('Creating Simulation pools');
-  const simulationPool = Array.from(
-    { length: allowedSampleSize },
-    (_, index) => {
-      const ringDices = Array.from({ length: ringDice }, () => {
-        const roll = sample(ringDiceOptions) as Roll;
-        return ringResolver(roll, [0, 0, 0], explosions);
-      });
-      const skillDices = Array.from({ length: skillDice }, () => {
-        const roll = sample(skillDiceOptions) as Roll;
-        return skillResolver(roll, [0, 0, 0], explosions);
-      });
-      if (
-        index === 0 ||
-        progressPoints.includes(index) ||
-        index === allowedSampleSize - 1
-      ) {
-        // eslint-disable-next-line no-restricted-globals
-        self.postMessage({
-          type: WORKER_TYPE,
-          message:
-            (index / allowedSampleSize) * simulationPoolDifficultyProportion
-        });
-      }
 
-      return [...ringDices, ...skillDices];
-    }
-  );
+  const simulationPool = [];
 
   const strife: number[] = [];
   const success: number[] = [];
   const opportunity: number[] = [];
 
-  const isPassableRollDifficultyProportion =
-    1 - simulationPoolDifficultyProportion;
+  const passableRollFilter = isPassableRoll({
+    tn,
+    to,
+    keep,
+    strife,
+    success,
+    opportunity,
+    maxStrife
+  });
 
-  console.info('Evaluating for success');
-  const successfulRolls = simulationPool.filter(
-    isPassableRoll({
-      tn,
-      to,
-      keep,
-      strife,
-      success,
-      opportunity,
-      maxStrife,
-      arrayLength: simulationPool.length,
-      difficultyProportion: isPassableRollDifficultyProportion
-    })
-  );
+  // do it old skool for speeeeeed
+  for (let index = 0; index < allowedSampleSize; index += 1) {
+    const ringDices = Array(ringDice);
+    for (let indexR = 0; indexR < ringDice; indexR += 1) {
+      const roll = sample(ringDiceOptions) as Roll;
+      ringDices[indexR] = ringResolver(roll, [0, 0, 0], explosions);
+    }
+    const skillDices = Array(skillDice);
+    for (let indexS = 0; indexS < skillDice; indexS += 1) {
+      const roll = sample(skillDiceOptions) as Roll;
+      skillDices[indexS] = skillResolver(roll, [0, 0, 0], explosions);
+    }
+
+    const totalRoll = ringDices.concat(skillDices);
+    const isPassable = passableRollFilter(totalRoll);
+    if (isPassable) {
+      simulationPool.push(totalRoll);
+    }
+
+    if (
+      index === 0 ||
+      progressPoints.includes(index) ||
+      index === allowedSampleSize - 1
+    ) {
+      // eslint-disable-next-line no-restricted-globals
+      self.postMessage({
+        type: WORKER_TYPE,
+        message: index / allowedSampleSize
+      });
+    }
+  }
 
   console.info('Calculating averages');
-  const averageStrife =
-    strife.length > 0
-      ? strife.reduce((acc, numS) => acc + numS, 0) / strife.length
-      : 0;
-  const averageSuccess =
-    success.length > 0
-      ? success.reduce((acc, numS) => acc + numS, 0) / success.length
-      : 0;
-  const averageOpportunity =
-    opportunity.length > 0
-      ? opportunity.reduce((acc, numS) => acc + numS, 0) / opportunity.length
-      : 0;
+  const adder = (acc: number, numS: number) => acc + numS;
+
+  const averageStrife = strife.reduce(adder, 0) / strife.length;
+  const averageSuccess = success.reduce(adder, 0) / success.length;
+  const averageOpportunity = opportunity.reduce(adder, 0) / opportunity.length;
 
   const averageExplosions = explosions.length / allowedSampleSize;
 
   const result = {
     sampleSize: allowedSampleSize,
-    probability: successfulRolls.length / allowedSampleSize,
+    probability: simulationPool.length / allowedSampleSize,
     averageStrife,
     combinationsPerRoll,
     averageSuccess,
