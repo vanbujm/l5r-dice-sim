@@ -118,37 +118,35 @@ const isPassableRoll = ({
   success,
   opportunity,
   maxStrife
-}: IIsPassableRoll) => {
-  return (completeRoll: ResultTotals[]) => {
+}: IIsPassableRoll) => (completeRoll: ResultTotals[]) => {
+  const [
+    maxSuccessNum,
+    maxStrifeNum,
+    maxOpportunityNum
+  ] = completeRoll.reduce(sumReducer as any, [0, 0, 0]);
+
+  const cantSucceed = !(
+    maxSuccessNum >= tn &&
+    maxOpportunityNum >= to &&
+    maxStrifeNum <= maxStrife
+  );
+
+  if (cantSucceed) return false;
+  return combinations(completeRoll, keep).some(combinationArray => {
     const [
-      maxSuccessNum,
-      maxStrifeNum,
-      maxOpportunityNum
-    ] = completeRoll.reduce(sumReducer as any, [0, 0, 0]);
+      successNum,
+      strifeNum,
+      opportunityNum
+    ] = combinationArray.reduce(sumReducer, [0, 0, 0]);
 
-    const cantSucceed = !(
-      maxSuccessNum >= tn &&
-      maxOpportunityNum >= to &&
-      maxStrifeNum <= maxStrife
-    );
-
-    if (cantSucceed) return false;
-    return combinations(completeRoll, keep).some(combinationArray => {
-      const [
-        successNum,
-        strifeNum,
-        opportunityNum
-      ] = combinationArray.reduce(sumReducer, [0, 0, 0]);
-
-      if (successNum >= tn && opportunityNum >= to && strifeNum <= maxStrife) {
-        strife.push(strifeNum);
-        success.push(successNum);
-        opportunity.push(opportunityNum);
-        return true;
-      }
-      return false;
-    });
-  };
+    if (successNum >= tn && opportunityNum >= to && strifeNum <= maxStrife) {
+      strife.push(strifeNum);
+      success.push(successNum);
+      opportunity.push(opportunityNum);
+      return true;
+    }
+    return false;
+  });
 };
 
 export interface ProbabilityResult {
@@ -268,10 +266,10 @@ export const calculateProbability = ({
 
   console.info('Calculating averages');
   const adder = (acc: number, numS: number) => acc + numS;
-
-  const averageStrife = strife.reduce(adder, 0) / strife.length;
-  const averageSuccess = success.reduce(adder, 0) / success.length;
-  const averageOpportunity = opportunity.reduce(adder, 0) / opportunity.length;
+  const averageStrife = strife.reduce(adder, 0) / strife.length || 0;
+  const averageSuccess = success.reduce(adder, 0) / success.length || 0;
+  const averageOpportunity =
+    opportunity.reduce(adder, 0) / opportunity.length || 0;
 
   const averageExplosions = explosions.length / allowedSampleSize;
 

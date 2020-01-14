@@ -1,4 +1,4 @@
-import React, { Reducer, useEffect, useMemo, useReducer } from 'react';
+import React, { Reducer, useEffect, useReducer } from 'react';
 import {
   Box,
   Button,
@@ -28,7 +28,7 @@ import { ProbabilityResult } from './rollSimulator';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ExpandMore } from '@material-ui/icons';
 import { AppTextField } from './AppTextField';
-import worker from './ComponentWorkerShim';
+import { useRollWorker } from './useRollWorker';
 import { WORKER_TYPE } from './workerTypes';
 import { lighten, mix } from 'polished';
 
@@ -147,14 +147,12 @@ const inputHandler = (e: any) => {
   return e.target.value;
 };
 
-const createWorker = () => worker();
-
 const formatter = new Intl.NumberFormat(window.navigator.language);
 
 export const AverageRoll = () => {
   const theme = useTheme();
 
-  const worker = useMemo(createWorker, [createWorker]);
+  const worker = useRollWorker();
 
   const initialStateWithWorker = { ...initialState };
 

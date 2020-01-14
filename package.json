@@ -23,6 +23,11 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "workerize-loader!./rollSimulator": "<rootDir>/src/__mocks__/rollSimulator"
+    }
+  },
   "dependencies": {
     "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.5.1",
