@@ -1,12 +1,10 @@
-// @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import createRollWorker from 'workerize-loader!./rollSimulator';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
-    // @ts-ignore
-    interface Matchers<R> {
+    interface Matchers<R, T> {
       toBeWithinRange(a: number, b: number): R;
     }
   }
