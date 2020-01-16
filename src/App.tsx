@@ -8,12 +8,10 @@ const App: React.FC = () => {
   return (
     <>
       <Nav />
-      <main>
-        <Container maxWidth="sm">
-          <SimulateRoll />
-          <AverageRoll />
-        </Container>
-      </main>
+      <Container maxWidth="sm" component="main">
+        <SimulateRoll />
+        <AverageRoll />
+      </Container>
     </>
   );
 };

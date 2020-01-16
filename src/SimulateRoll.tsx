@@ -1,4 +1,4 @@
-import React, { Dispatch, Reducer, useReducer } from 'react';
+import React, { Dispatch, Reducer, useReducer, useRef } from 'react';
 import {
   Box,
   Button,
@@ -114,7 +114,7 @@ const FormattedRoll = ({ roll: { image } }: { roll: RollResult }) => (
   />
 );
 
-const rollResultMapper = (type: string, dispatch: Dispatch<any>) => (
+const rollResultMapper = (type: string, dispatch: Dispatch<any>, ref: any) => (
   rollArr: RollResult[][],
   index: number
 ) => {
@@ -143,11 +143,12 @@ export const Results: React.FC<ResultsProps> = ({
   ringDices,
   dispatch
 }) => {
+  const thisRef = useRef();
   const FormattedSkillDice = skillDices.map(
-    rollResultMapper('skillDices', dispatch)
+    rollResultMapper('skillDices', dispatch, thisRef)
   );
   const FormattedRingDice = ringDices.map(
-    rollResultMapper('ringDices', dispatch)
+    rollResultMapper('ringDices', dispatch, thisRef)
   );
 
   return (
@@ -165,7 +166,7 @@ export const SimulateRoll = () => {
   );
 
   return (
-    <Card style={{ marginTop: '1rem' }}>
+    <Card style={{ marginTop: '1rem' }} component="section">
       <CardContent>
         <Typography variant="h5" component="h1">
           Simulate Roll
