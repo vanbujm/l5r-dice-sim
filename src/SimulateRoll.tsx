@@ -114,7 +114,7 @@ const FormattedRoll = ({ roll: { image } }: { roll: RollResult }) => (
   />
 );
 
-const rollResultMapper = (type: string, dispatch: Dispatch<any>, ref: any) => (
+const rollResultMapper = (type: string, dispatch: Dispatch<any>) => (
   rollArr: RollResult[][],
   index: number
 ) => {
@@ -143,12 +143,11 @@ export const Results: React.FC<ResultsProps> = ({
   ringDices,
   dispatch
 }) => {
-  const thisRef = useRef();
   const FormattedSkillDice = skillDices.map(
-    rollResultMapper('skillDices', dispatch, thisRef)
+    rollResultMapper('skillDices', dispatch)
   );
   const FormattedRingDice = ringDices.map(
-    rollResultMapper('ringDices', dispatch, thisRef)
+    rollResultMapper('ringDices', dispatch)
   );
 
   return (
