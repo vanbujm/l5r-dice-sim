@@ -207,7 +207,6 @@ export const calculateProbability = ({
   const skillResolver = resolveDiceTotals('s');
   const ringResolver = resolveDiceTotals('r');
 
-  // @ts-ignore
   const progressPoints: number[] = [...Array(100).keys()].map(val =>
     Math.round((val / 100) * allowedSampleSize)
   );

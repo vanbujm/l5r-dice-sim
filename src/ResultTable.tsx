@@ -31,7 +31,7 @@ export const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
               <span
                 style={{
                   fontWeight: 'bold',
-                  fontSize: '1.25rem',
+                  fontSize: '1.5rem',
                   color: lighten(
                     0.1,
                     mix(

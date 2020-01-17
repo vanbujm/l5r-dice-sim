@@ -14,7 +14,8 @@
     "browser": true,
     "jasmine": true,
     "jest": true,
-    "jest/globals": true
+    "jest/globals": true,
+    "serviceworker": true
   },
   "rules": {
     "prettier/prettier": [
