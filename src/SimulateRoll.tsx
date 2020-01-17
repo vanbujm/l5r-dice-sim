@@ -1,4 +1,4 @@
-import React, { Dispatch, Reducer, useReducer, useRef } from 'react';
+import React, { Dispatch, Reducer, useReducer } from 'react';
 import {
   Box,
   Button,
