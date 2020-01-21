@@ -26,7 +26,8 @@ const breakpoints: Breakpoints = {
   l: '1280px',
   m: '980px',
   s: '736px',
-  xs: '480px'
+  xs: '480px',
+  xxs: '320px'
 };
 
 const sizes: Sizes = {

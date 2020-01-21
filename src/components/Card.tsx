@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import {darken, desaturate, lighten} from 'polished';
+import { darken, desaturate, lighten } from 'polished';
 import { ColorPaletteColor } from '../design-system/theme-types';
 
 interface StyleProps {
@@ -8,6 +8,9 @@ interface StyleProps {
 }
 
 const CardBase = styled.div<StyleProps>`
+  display: flex;
+  justify-content: center;
+
   padding: ${({ theme: { grid } }) => `${grid.spaceM}`};
 
   background-color: ${props => lighten(0.5, props.theme.color[props.color])};
@@ -55,14 +58,17 @@ const CardBase = styled.div<StyleProps>`
 `;
 
 const SecreteParent = styled.div`
-  display: inline-block;
   margin: ${({ theme: { grid } }) => `${grid.spaceS}`};
   position: relative;
 `;
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: ColorPaletteColor;
 }
+
+const ContentContainer = styled.div`
+  display: inline-block;
+`;
 
 export const Card: React.FC<PropsWithChildren<CardProps>> = ({
   children,
@@ -70,7 +76,9 @@ export const Card: React.FC<PropsWithChildren<CardProps>> = ({
 }) => {
   return (
     <SecreteParent>
-      <CardBase color={color}>{children}</CardBase>
+      <CardBase color={color}>
+        <ContentContainer>{children}</ContentContainer>
+      </CardBase>
     </SecreteParent>
   );
 };

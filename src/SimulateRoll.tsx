@@ -1,19 +1,14 @@
 import React, { Dispatch, Reducer, useReducer } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Tooltip,
-  Typography
-} from '@material-ui/core';
+import { Box, Divider, Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
 import { rollDice, RollResult } from './rollSimulator';
-import { AppTextField } from './AppTextField';
+import { Card } from './components/Card';
+import { Input } from './components/Input';
+import { Button } from './components/Button';
+import { Heading } from './components/Heading';
 
 const InputSection = styled(Box)`
-  margin: 1rem 0;
+  margin: 0 0 1rem 0;
 `;
 
 const HoverableContainer = styled(Box)`
@@ -22,11 +17,11 @@ const HoverableContainer = styled(Box)`
 
   &:hover {
     cursor: pointer;
-    box-shadow: 0 0 2px inset black;
+    box-shadow: 0 0 2px inset ${props => props.theme.color.dark};
     border-radius: 0.25rem;
   }
   &:active {
-    box-shadow: 0 0 4px inset black;
+    box-shadow: 0 0 4px inset ${props => props.theme.color.dark};
   }
 `;
 
@@ -165,61 +160,49 @@ export const SimulateRoll = () => {
   );
 
   return (
-    <Card style={{ marginTop: '1rem' }} component="section">
-      <CardContent>
-        <Typography variant="h5" component="h1">
-          Simulate Roll
-        </Typography>
-        <InputSection>
-          <AppTextField
-            id="simulate-skill-dice"
-            label="Skill Dice"
-            type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
-            value={skillDice}
-            onChange={(e: any) =>
-              dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
-            }
-          />
-          <AppTextField
-            id="simulate-ring-dice"
-            label="Ring Dice"
-            type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
-            value={ringDice}
-            onChange={(e: any) =>
-              dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
-            }
-          />
-        </InputSection>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => dispatch({ type: SIMULATE })}
-        >
-          Simulate
-        </Button>
-        {result !== null ? (
-          <>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => dispatch({ type: CLEAR })}
-              style={{ marginLeft: '1rem' }}
-            >
-              Clear
-            </Button>
-            <Box style={{ marginTop: '1rem' }}>
-              <Divider />
-              <Results {...(result as ResultsProps)} dispatch={dispatch} />
-            </Box>
-          </>
-        ) : null}
-      </CardContent>
+    <Card color="important">
+      <Heading color="important" type="h3" component="h2">
+        Simulate Roll
+      </Heading>
+      <InputSection>
+        <Input
+          color="info"
+          id="simulate-skill-dice"
+          label="Skill Dice"
+          type="number"
+          value={skillDice}
+          onChange={(e: any) =>
+            dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
+          }
+        />
+        <Input
+          id="simulate-ring-dice"
+          label="Ring Dice"
+          type="number"
+          value={ringDice}
+          onChange={(e: any) =>
+            dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
+          }
+        />
+      </InputSection>
+      <Button color="success" onClick={() => dispatch({ type: SIMULATE })}>
+        Simulate
+      </Button>
+      {result !== null ? (
+        <>
+          <Button
+            color="important"
+            onClick={() => dispatch({ type: CLEAR })}
+            style={{ marginLeft: '1rem' }}
+          >
+            Clear
+          </Button>
+          <Box style={{ marginTop: '1rem' }}>
+            <Divider />
+            <Results {...(result as ResultsProps)} dispatch={dispatch} />
+          </Box>
+        </>
+      ) : null}
     </Card>
   );
 };

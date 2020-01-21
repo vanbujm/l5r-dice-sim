@@ -27,6 +27,7 @@ export interface Breakpoints {
   m: string;
   s: string;
   xs: string;
+  xxs: string;
 }
 
 export interface Sizes {

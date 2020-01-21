@@ -61,7 +61,11 @@ const NavContainer = styled.div`
 
 export const Navigation = () => (
   <NavContainer>
-    <TopBar>Title</TopBar>
+    <TopBar>
+      <Heading type="h1" color="light">
+        Title
+      </Heading>
+    </TopBar>
   </NavContainer>
 );
 export default {

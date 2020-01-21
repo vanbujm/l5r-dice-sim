@@ -16,10 +16,11 @@ export const Heading: React.FC<PropsWithChildren<HeadingProps>> = ({
   ...props
 }) => {
   const Component = (subProps: any) =>
-    React.createElement(type, subProps, children);
+    React.createElement(component, subProps, children);
   const StyledComponent = styled(Component)`
     font-family: 'Edo', serif;
+    font-size: ${props => props.theme.sizes[props.type]};
     color: ${props => props.theme.color[props.color]};
   `;
-  return <StyledComponent color={color} {...props} />;
+  return <StyledComponent color={color} type={type} {...props} />;
 };

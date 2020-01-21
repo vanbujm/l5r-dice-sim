@@ -1,25 +1,18 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  LinearProgress,
-  Snackbar,
-  Typography
-} from '@material-ui/core';
+import { Box, Divider, LinearProgress, Snackbar } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ResultTable } from './ResultTable';
 import { useRollWorkerWithReducer } from './useRollWorkerWithReducer';
 import { CalculateChanceForm } from './CalculateChancesForm';
+import { Button } from './components/Button';
+import { Card } from './components/Card';
+import { Heading } from './components/Heading';
 
 export const AverageRoll = () => {
   const { state, handlers } = useRollWorkerWithReducer();
 
   const CancelButton = state.loading ? (
     <Button
-      variant="contained"
       color="secondary"
       onClick={handlers.cancelHandler}
       style={{ marginLeft: '1rem' }}
@@ -31,7 +24,6 @@ export const AverageRoll = () => {
   const ClearButton =
     state.result != null ? (
       <Button
-        variant="contained"
         color="secondary"
         onClick={handlers.clearHandler}
         style={{ marginLeft: '1rem' }}
@@ -60,7 +52,7 @@ export const AverageRoll = () => {
   ) : null;
 
   return (
-    <Card style={{ marginTop: '1rem' }} component="section">
+    <Card style={{ marginTop: '1rem' }}>
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={state.result === null}
@@ -76,23 +68,17 @@ export const AverageRoll = () => {
           Try again with smaller numbers.
         </Alert>
       </Snackbar>
-      <CardContent>
-        <Typography variant="h5" component="h1">
-          Calculate Chances
-        </Typography>
-        <CalculateChanceForm state={state} handlers={handlers} />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handlers.requestCalcHandler}
-        >
-          Simulate
-        </Button>
-        {CancelButton}
-        {ClearButton}
-        {LoadingBar}
-        {Results}
-      </CardContent>
+      <Heading type="h3" component="h2">
+        Calculate Chances
+      </Heading>
+      <CalculateChanceForm state={state} handlers={handlers} />
+      <Button color="primary" onClick={handlers.requestCalcHandler}>
+        Simulate
+      </Button>
+      {CancelButton}
+      {ClearButton}
+      {LoadingBar}
+      {Results}
     </Card>
   );
 };

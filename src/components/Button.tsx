@@ -20,6 +20,7 @@ const ButtonBase = styled.button<StyleProps>`
     ${({ theme }) => darken(0.1, theme.color.light)}
   );
   color: ${props => darken(0.1, props.theme.color[props.color])};
+  font-size: ${props => props.theme.sizes.h6};
   font-weight: bold;
 
   border: ${props =>
@@ -75,19 +76,20 @@ const ButtonBase = styled.button<StyleProps>`
   }
 `;
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ColorPaletteColor;
 }
 
 export const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
-  color = 'success'
+  color = 'success',
+  ...props
 }) => {
   const isTabbing = useSmartOutline();
 
   return (
     <SecreteParent>
-      <ButtonBase isTabbing={isTabbing} color={color}>
+      <ButtonBase isTabbing={isTabbing} color={color} {...props}>
         {children}
       </ButtonBase>
     </SecreteParent>

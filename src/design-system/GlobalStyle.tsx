@@ -48,7 +48,6 @@ html, body {
 }
 
 h1 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h1};
   line-height: 6rem;
@@ -58,7 +57,6 @@ h1 {
 }
 
 h2 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h2};
   line-height: 6rem;
@@ -68,7 +66,6 @@ h2 {
 }
 
 h3 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h3};
   line-height: 3rem;
@@ -78,7 +75,6 @@ h3 {
 }
 
 h4 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h4};
   line-height: 3rem;
@@ -88,7 +84,6 @@ h4 {
 }
 
 h5 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h5};
   line-height: 3rem;
@@ -98,7 +93,6 @@ h5 {
 }
 
 h6 {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.heading};
   font-size: ${theme.sizes.h6};
   line-height: 3rem;
@@ -108,7 +102,6 @@ h6 {
 }
 
 p {
-  margin-bottom: 2rem;
   font-family: ${theme.fonts.text};
   font-size: ${theme.sizes.p};
   line-height: 2rem;
@@ -129,7 +122,6 @@ input {
 
 @media screen and (max-width: ${theme.breakpoints.s}) {
   h1 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH1};
     line-height: 9rem;
@@ -139,7 +131,6 @@ input {
   }
 
   h2 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH2};
     line-height: 6rem;
@@ -149,7 +140,6 @@ input {
   }
 
   h3 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH3};
     line-height: 6rem;
@@ -159,7 +149,6 @@ input {
   }
 
   h4 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH4};
     line-height: 6rem;
@@ -169,7 +158,6 @@ input {
   }
 
   h5 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH5};
     line-height: 3rem;
@@ -179,7 +167,6 @@ input {
   }
 
   h6 {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.heading};
     font-size: ${theme.sizes.mobileH6};
     line-height: 3rem;
@@ -189,7 +176,6 @@ input {
   }
 
   p {
-    margin-bottom: 2rem;
     font-family: ${theme.fonts.text};
     font-size: ${theme.sizes.mobileP};
     line-height: 2rem;

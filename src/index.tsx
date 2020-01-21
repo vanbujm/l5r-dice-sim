@@ -2,24 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {
-  CssBaseline,
-  MuiThemeProvider,
-  StylesProvider
-} from '@material-ui/core';
 import { ThemeProvider } from 'styled-components';
-import { muiTheme, theme } from './theme';
+import { Reset } from './design-system/Reset';
+import { GlobalStyles } from './design-system/GlobalStyle';
+import { theme } from './design-system/theme';
 
 const WrappedApp = () => (
   <>
-    <StylesProvider injectFirst>
-      <MuiThemeProvider theme={muiTheme}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
-      </MuiThemeProvider>
-    </StylesProvider>
+    <Reset />
+    <GlobalStyles />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </>
 );
 
