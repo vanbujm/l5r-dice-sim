@@ -9,7 +9,6 @@ interface StyleProps {
 
 const CardBase = styled.div<StyleProps>`
   display: flex;
-  justify-content: center;
 
   padding: ${({ theme: { grid } }) => `${grid.spaceM}`};
 

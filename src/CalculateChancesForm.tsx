@@ -1,19 +1,18 @@
-import { AppTextField } from './AppTextField';
 import {
   Box,
-  Checkbox,
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
-  FormControlLabel,
   FormGroup,
-  Grid,
-  Typography
+  Grid
 } from '@material-ui/core';
 import { ExpandMore } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
 import { SimulationState } from './rollReducer';
+import { Input } from './components/Input';
+import { Heading } from './components/Heading';
+import { Checkbox } from './components/Checkbox';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -57,45 +56,33 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
   return (
     <>
       <InputSection>
-        <AppTextField
+        <Input
           id="average-skill-dice"
           label="Skill Dice"
           type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
           value={skillDice}
           onChange={updateSkillDiceHandler}
         />
-        <AppTextField
+        <Input
           id="ring-dice"
           label="Ring Dice"
           type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
           value={ringDice}
           onChange={updateRingDiceHandler}
         />
       </InputSection>
       <InputSection>
-        <AppTextField
+        <Input
           id="average-target-number"
           label="Target Success"
           type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
           value={tn}
           onChange={updateTnHandler}
         />
-        <AppTextField
+        <Input
           id="target-opportunity"
           label="Target Opportunity"
           type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
           value={to}
           onChange={updateToHandler}
         />
@@ -107,41 +94,32 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
             aria-controls="advanced-options-panel1"
             id="advanced-options-panel"
           >
-            <Typography>Advanced Options</Typography>
+            <Heading type="h6" component="h3">Advanced Options</Heading>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <AppTextField
+                <Input
                   id="maximum-strife"
                   label="Maximum Strife"
                   type="text"
-                  InputLabelProps={{
-                    shrink: true
-                  }}
                   value={maxStrife}
                   onChange={updateMaxStrifeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormGroup row>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={skilledAssist}
-                        onChange={updateSkilledAssistHandler}
-                      />
-                    }
+                  <Checkbox
+                    id="Skilled Assist"
                     label="Skilled Assist"
+                    checked={skilledAssist}
+                    onChange={updateSkilledAssistHandler}
                   />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={unskilledAssist}
-                        onChange={updateUnskilledAssistHandler}
-                      />
-                    }
+                  <Checkbox
+                    id="UnSkilledAssist"
                     label="UnSkilledAssist"
+                    checked={unskilledAssist}
+                    onChange={updateUnskilledAssistHandler}
                   />
                 </FormGroup>
               </Grid>

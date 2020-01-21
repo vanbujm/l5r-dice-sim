@@ -9,6 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   color?: ColorPaletteColor;
+  checked?: boolean;
 }
 
 interface InputContainerProps {
@@ -16,7 +17,8 @@ interface InputContainerProps {
 }
 
 const InputContainer = styled.div<InputContainerProps>`
-  padding: calc(${props => props.theme.grid.spaceS} - 4px) ${props => props.theme.grid.spaceS};
+  padding: calc(${props => props.theme.grid.spaceS} - 4px)
+    ${props => props.theme.grid.spaceS};
   display: inline-flex;
   align-items: center;
   background-color: ${props => darken(0.1, props.theme.color[props.color])};
@@ -86,7 +88,7 @@ const InputLabel = styled.label<InputLabelProps>`
   }
 `;
 
-interface InputBaseProps {
+interface InputBaseProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isTabbing: boolean;
   color: ColorPaletteColor;
 }
@@ -126,6 +128,7 @@ const InputWrapper = styled.div`
 export const Checkbox: React.FC<PropsWithChildren<InputProps>> = ({
   id,
   label,
+  checked,
   color = 'flair',
   ...props
 }) => {
@@ -139,6 +142,7 @@ export const Checkbox: React.FC<PropsWithChildren<InputProps>> = ({
             {...props}
             color={color}
             isTabbing={isTabbing}
+            value={String(checked)}
             type="checkbox"
           />
           <InputLabel htmlFor={id} color={color}>
