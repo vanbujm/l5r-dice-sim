@@ -1,17 +1,16 @@
-import React, { ReactHTML, useContext } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import React, { useContext } from 'react';
+import { ThemeContext } from 'styled-components';
 import { Heading } from '../components/Heading';
 import { Text } from '../components/Text';
+import { Sizes } from './theme-types';
 
 const Headings = () => (
   <>
-    {(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as (keyof ReactHTML)[]).map(
-      (v, i) => (
-        <Heading type={v} key={`heading${i}`}>
-          Heading {i + 1}
-        </Heading>
-      )
-    )}
+    {(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as (keyof Sizes)[]).map((v, i) => (
+      <Heading type={v} key={`heading${i}`}>
+        Heading {i + 1}
+      </Heading>
+    ))}
   </>
 );
 

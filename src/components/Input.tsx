@@ -82,13 +82,14 @@ export const Input: React.FC<PropsWithChildren<InputProps>> = ({
   id,
   label,
   color = 'flair',
+  style,
   ...props
 }) => {
   const isTabbing = useSmartOutline();
   return (
     <InputContainer>
       <SecreteParent style={{ margin: 0 }}>
-        <InputLabel htmlFor={id} color={color}>
+        <InputLabel htmlFor={id} color={color} style={style}>
           {label}
         </InputLabel>
       </SecreteParent>

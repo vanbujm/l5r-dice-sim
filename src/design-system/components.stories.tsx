@@ -7,6 +7,7 @@ import { Text } from '../components/Text';
 import { Input } from '../components/Input';
 import { Checkbox } from '../components/Checkbox';
 import { TopBar } from '../components/TopBar';
+import { Accordion, AccordionItem } from '../components/Accordion';
 
 const ComponentContainer = styled.div`
   padding: 3rem;
@@ -68,6 +69,30 @@ export const Navigation = () => (
     </TopBar>
   </NavContainer>
 );
+
+export const Accordions = () => (
+  <ComponentContainer>
+    <Accordion>
+      <AccordionItem label="Accordion Item 1">
+        <Text color="success">Hidden accordion text</Text>
+      </AccordionItem>
+    </Accordion>
+    <Accordion>
+      <AccordionItem label="Accordion Card Item 1" card>
+        <Text color="success">Hidden accordion text</Text>
+      </AccordionItem>
+    </Accordion>
+    <Accordion>
+      <AccordionItem label="Accordion Item 1" color="important">
+        <Text color="important">Hidden accordion text 1</Text>
+      </AccordionItem>
+      <AccordionItem label="Accordion Item 2" color="important">
+        <Text color="important">Hidden accordion text 2</Text>
+      </AccordionItem>
+    </Accordion>
+  </ComponentContainer>
+);
+
 export default {
   title: 'Components'
 };

@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, Divider, LinearProgress, Snackbar } from '@material-ui/core';
+import {
+  Box,
+  Divider,
+  LinearProgress,
+  makeStyles,
+  Snackbar
+} from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ResultTable } from './ResultTable';
 import { useRollWorkerWithReducer } from './useRollWorkerWithReducer';
@@ -7,9 +13,17 @@ import { CalculateChanceForm } from './CalculateChancesForm';
 import { Button } from './components/Button';
 import { Card } from './components/Card';
 import { Heading } from './components/Heading';
+import { theme } from './design-system/theme';
+
+const useLoadingBarStyles = makeStyles({
+  colorPrimary: { backgroundColor: theme.color.light },
+  barColorPrimary: { backgroundColor: theme.color.primary }
+});
 
 export const AverageRoll = () => {
   const { state, handlers } = useRollWorkerWithReducer();
+
+  const loadingBarClasses = useLoadingBarStyles();
 
   const CancelButton = state.loading ? (
     <Button
@@ -35,9 +49,13 @@ export const AverageRoll = () => {
   const LoadingBar = state.loading ? (
     <Box style={{ margin: '1rem 0' }}>
       <LinearProgress
+        classes={{
+          colorPrimary: loadingBarClasses.colorPrimary,
+          barColorPrimary: loadingBarClasses.barColorPrimary
+        }}
         variant="determinate"
         value={Number(state.progress) || 0}
-        color="secondary"
+        color="primary"
       />
     </Box>
   ) : null;

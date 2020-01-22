@@ -130,6 +130,7 @@ export const Checkbox: React.FC<PropsWithChildren<InputProps>> = ({
   label,
   checked,
   color = 'flair',
+  style,
   ...props
 }) => {
   const isTabbing = useSmartOutline();
@@ -145,7 +146,7 @@ export const Checkbox: React.FC<PropsWithChildren<InputProps>> = ({
             value={String(checked)}
             type="checkbox"
           />
-          <InputLabel htmlFor={id} color={color}>
+          <InputLabel htmlFor={id} color={color} style={style}>
             {label}
           </InputLabel>
         </InputContainer>

@@ -1,18 +1,10 @@
-import {
-  Box,
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  FormGroup,
-  Grid
-} from '@material-ui/core';
-import { ExpandMore } from '@material-ui/icons';
-import React from 'react';
-import styled from 'styled-components';
+import { Box, FormGroup, Grid } from '@material-ui/core';
+import React, { useContext } from 'react';
+import styled, { ThemeContext } from 'styled-components';
 import { SimulationState } from './rollReducer';
 import { Input } from './components/Input';
-import { Heading } from './components/Heading';
 import { Checkbox } from './components/Checkbox';
+import { Accordion, AccordionItem } from './components/Accordion';
 
 const InputSection = styled(Box)`
   margin: 1rem 0;
@@ -53,6 +45,7 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
     updateUnskilledAssistHandler
   }
 }) => {
+  const themeContext = useContext(ThemeContext);
   return (
     <>
       <InputSection>
@@ -61,6 +54,7 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
           label="Skill Dice"
           type="number"
           value={skillDice}
+          color="info"
           onChange={updateSkillDiceHandler}
         />
         <Input
@@ -68,6 +62,7 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
           label="Ring Dice"
           type="number"
           value={ringDice}
+          color="flair"
           onChange={updateRingDiceHandler}
         />
       </InputSection>
@@ -77,6 +72,7 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
           label="Target Success"
           type="number"
           value={tn}
+          color="error"
           onChange={updateTnHandler}
         />
         <Input
@@ -84,48 +80,47 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
           label="Target Opportunity"
           type="number"
           value={to}
+          color="success"
           onChange={updateToHandler}
         />
       </InputSection>
       <InputSection>
-        <ExpansionPanel>
-          <ExpansionPanelSummary
-            expandIcon={<ExpandMore />}
-            aria-controls="advanced-options-panel1"
-            id="advanced-options-panel"
-          >
-            <Heading type="h6" component="h3">Advanced Options</Heading>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+        <Accordion>
+          <AccordionItem label="Advanced Options" color="info" card>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{paddingBottom: '0'}}>
                 <Input
+                  style={{ fontSize: themeContext.sizes.p }}
                   id="maximum-strife"
                   label="Maximum Strife"
-                  type="text"
                   value={maxStrife}
+                  color="important"
                   onChange={updateMaxStrifeHandler}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormGroup row>
                   <Checkbox
+                    style={{ fontSize: themeContext.sizes.p }}
                     id="Skilled Assist"
                     label="Skilled Assist"
                     checked={skilledAssist}
                     onChange={updateSkilledAssistHandler}
+                    color="success"
                   />
                   <Checkbox
+                    style={{ fontSize: themeContext.sizes.p }}
                     id="UnSkilledAssist"
-                    label="UnSkilledAssist"
+                    label="UnSkilled Assist"
                     checked={unskilledAssist}
                     onChange={updateUnskilledAssistHandler}
+                    color="error"
                   />
                 </FormGroup>
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionItem>
+        </Accordion>
       </InputSection>
     </>
   );

@@ -16,7 +16,7 @@ const Nav = styled.nav`
   padding: ${props => props.theme.grid.spaceM}
     ${props => props.theme.grid.spaceM}
     max(${props => props.theme.grid.spaceM}, 2rem)
-    max(${props => props.theme.grid.spaceM}, 3rem);
+    max(${props => props.theme.grid.spaceM}, 5rem);
 
   h1,
   h2,

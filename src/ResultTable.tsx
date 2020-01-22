@@ -1,4 +1,5 @@
 import {
+  makeStyles,
   Paper,
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
 import { lighten, mix } from 'polished';
 import React from 'react';
 import { ProbabilityResult } from './rollSimulator';
+import { theme } from './design-system/theme';
 
 const formatter = new Intl.NumberFormat(window.navigator.language);
 
@@ -17,17 +19,33 @@ interface ResultTableProps {
   result: ProbabilityResult;
 }
 
+const useTableStyles = makeStyles({
+  row: {
+    backgroundColor: theme.color.light,
+    color: theme.color.dark,
+    fontFamily: theme.fonts.text
+  },
+  cell: {
+    fontFamily: theme.fonts.text
+  }
+});
+
 export const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
   const theme = useTheme();
+  const tableClasses = useTableStyles();
   return (
     <TableContainer component={Paper}>
       <Table size="small" aria-label="a dense table">
         <TableBody>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow classes={{ root: tableClasses.row }} hover>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               <span style={{ fontSize: '1.25rem' }}>Chance of success</span>
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               <span
                 style={{
                   fontWeight: 'bold',
@@ -46,51 +64,75 @@ export const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
               </span>
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Average strife
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {result.averageStrife.toFixed(2)}
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Average successes
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {result.averageSuccess.toFixed(2)}
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Average opportunity
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {result.averageOpportunity.toFixed(2)}
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Average explosions
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {result.averageExplosions.toFixed(2)}
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Number of keep combination per roll
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {formatter.format(result.combinationsPerRoll)}
             </TableCell>
           </TableRow>
-          <TableRow hover>
-            <TableCell component="th" scope="row">
+          <TableRow hover classes={{ root: tableClasses.row }}>
+            <TableCell
+              classes={{ root: tableClasses.cell }}
+              component="th"
+              scope="row"
+            >
               Sample Size
             </TableCell>
-            <TableCell align="right">
+            <TableCell classes={{ root: tableClasses.cell }} align="right">
               {formatter.format(Math.round(result.sampleSize))}
             </TableCell>
           </TableRow>

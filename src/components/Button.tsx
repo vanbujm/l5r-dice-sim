@@ -20,6 +20,7 @@ const ButtonBase = styled.button<StyleProps>`
     ${({ theme }) => darken(0.1, theme.color.light)}
   );
   color: ${props => darken(0.1, props.theme.color[props.color])};
+  font-family: ${props => props.theme.fonts.text};
   font-size: ${props => props.theme.sizes.h6};
   font-weight: bold;
 

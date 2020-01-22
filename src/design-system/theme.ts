@@ -31,13 +31,13 @@ const breakpoints: Breakpoints = {
 };
 
 const sizes: Sizes = {
-  h1: '3.8125em',
-  h2: '3.0625em',
-  h3: '2.4375em',
-  h4: '1.9375em',
-  h5: '1.5625em',
-  h6: '1.25em',
-  p: '1em',
+  h1: '3.8125rem',
+  h2: '3.0625rem',
+  h3: '2.4375rem',
+  h4: '1.9375rem',
+  h5: '1.5625rem',
+  h6: '1.25rem',
+  p: '1rem',
 
   mobileH1: '6.103515625em',
   mobileH2: '4.8828125em',
