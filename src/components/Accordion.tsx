@@ -12,7 +12,7 @@ const TabContainer = styled.div`
   font-family: ${props => props.theme.fonts.text};
   font-size: ${props => props.theme.sizes.h6};
   font-weight: bold;
-  margin: 0 ${props => props.theme.grid.spaceM};
+  margin: 0 ${props => props.theme.grid.spaceS};
 `;
 
 const Tab = styled.div`

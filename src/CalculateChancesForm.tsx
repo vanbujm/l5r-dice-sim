@@ -88,7 +88,7 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
         <Accordion>
           <AccordionItem label="Advanced Options" color="info" card>
             <Grid container spacing={3}>
-              <Grid item xs={12} style={{paddingBottom: '0'}}>
+              <Grid item xs={12} style={{ paddingBottom: '0' }}>
                 <Input
                   style={{ fontSize: themeContext.sizes.p }}
                   id="maximum-strife"
