@@ -5,13 +5,13 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableRow,
-  useTheme
+  TableRow
 } from '@material-ui/core';
 import { lighten, mix } from 'polished';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ProbabilityResult } from './rollSimulator';
 import { theme } from './design-system/theme';
+import { ThemeContext } from 'styled-components';
 
 const formatter = new Intl.NumberFormat(window.navigator.language);
 
@@ -31,7 +31,7 @@ const useTableStyles = makeStyles({
 });
 
 export const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
-  const theme = useTheme();
+  const theme = useContext(ThemeContext);
   const tableClasses = useTableStyles();
   return (
     <TableContainer component={Paper}>
@@ -50,13 +50,10 @@ export const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
                 style={{
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
-                  color: lighten(
-                    0.1,
-                    mix(
-                      result.probability,
-                      theme.palette.success.main,
-                      theme.palette.error.main
-                    )
+                  color: mix(
+                    result.probability,
+                    theme.color.success,
+                    theme.color.important
                   )
                 }}
               >
