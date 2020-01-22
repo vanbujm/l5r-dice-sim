@@ -7,7 +7,7 @@ import {
   TableContainer,
   TableRow
 } from '@material-ui/core';
-import { lighten, mix } from 'polished';
+import { mix } from 'polished';
 import React, { useContext } from 'react';
 import { ProbabilityResult } from './rollSimulator';
 import { theme } from './design-system/theme';
