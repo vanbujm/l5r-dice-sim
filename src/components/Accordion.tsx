@@ -83,6 +83,12 @@ const SecreteCheckBox = styled.input<TabLabelProps>`
   position: absolute;
   opacity: 0;
   z-index: -1;
+  
+  &:focus {
+    & + ${TabLabel} {
+      outline: ${props => props.theme.color[props.color]} auto 5px;
+    }
+  }
 
   &:checked {
     & + ${TabLabel} {
