@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { CSSProperties, PropsWithChildren, ReactNode } from 'react';
 import styled from 'styled-components';
 import { darken, readableColor } from 'polished';
 import { ColorPaletteColor } from '../design-system/theme-types';
@@ -8,11 +8,15 @@ import { useSmartOutline } from '../hooks/useSmartOutline';
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   color?: ColorPaletteColor;
+  inputStyles?: CSSProperties;
+  containerStyles?: CSSProperties;
+  aside?: ReactNode;
 }
 
 const InputContainer = styled.div`
   padding: ${props => props.theme.grid.spaceS};
-  display: inline-flex;
+  display: flex;
+  flex: 1;
   flex-direction: column;
 `;
 
@@ -21,10 +25,10 @@ interface InputLabelProps {
 }
 
 const InputLabel = styled.label<InputLabelProps>`
-  padding: ${props => `${props.theme.grid.spaceS} 0`};
+  padding: ${props => `${props.theme.grid.spaceS}`};
   margin: ${props => `${props.theme.grid.spaceS} 0`};
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 
   font-family: ${props => props.theme.fonts.heading};
 
@@ -62,6 +66,8 @@ interface InputBaseProps {
 }
 
 const InputBase = styled.input<InputBaseProps>`
+  width: 100%;
+
   border-bottom: ${props =>
     `1px solid ${darken(0.1, props.theme.color[props.color])}`};
   border-top: ${props =>
@@ -78,28 +84,40 @@ const InputBase = styled.input<InputBaseProps>`
   }
 `;
 
+const CenteringDiv = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export const Input: React.FC<PropsWithChildren<InputProps>> = ({
   id,
   label,
   color = 'flair',
   style,
+  inputStyles,
+  containerStyles,
+  aside,
   ...props
 }) => {
   const isTabbing = useSmartOutline();
   return (
-    <InputContainer>
+    <InputContainer style={containerStyles}>
       <SecreteParent style={{ margin: 0 }}>
         <InputLabel htmlFor={id} color={color} style={style}>
           {label}
         </InputLabel>
       </SecreteParent>
-      <InputBase
-        aria-label={label}
-        id={id}
-        {...props}
-        color={color}
-        isTabbing={isTabbing}
-      />
+      <CenteringDiv>
+        <InputBase
+          aria-label={label}
+          id={id}
+          {...props}
+          color={color}
+          style={inputStyles}
+          isTabbing={isTabbing}
+        />
+        {aside}
+      </CenteringDiv>
     </InputContainer>
   );
 };

@@ -1,5 +1,5 @@
 import React, { Dispatch, Reducer, useReducer } from 'react';
-import { Box, Divider, Tooltip } from '@material-ui/core';
+import { Box, Divider, Grid, Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
 import { rollDice, RollResult } from './rollSimulator';
 import { Card } from './components/Card';
@@ -161,29 +161,40 @@ export const SimulateRoll = () => {
 
   return (
     <Card color="important">
-      <Heading color="important" type="h3" component="h2">
+      <Heading
+        color="important"
+        type="h3"
+        component="h2"
+        style={{ margin: '0 0.5rem' }}
+      >
         Simulate Roll
       </Heading>
       <InputSection>
-        <Input
-          color="info"
-          id="simulate-skill-dice"
-          label="Skill Dice"
-          type="number"
-          value={skillDice}
-          onChange={(e: any) =>
-            dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
-          }
-        />
-        <Input
-          id="simulate-ring-dice"
-          label="Ring Dice"
-          type="number"
-          value={ringDice}
-          onChange={(e: any) =>
-            dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
-          }
-        />
+        <Grid container spacing={3}>
+          <Grid item xs={6}>
+            <Input
+              color="info"
+              id="simulate-skill-dice"
+              label="Skill Dice"
+              type="number"
+              value={skillDice}
+              onChange={(e: any) =>
+                dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
+              }
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Input
+              id="simulate-ring-dice"
+              label="Ring Dice"
+              type="number"
+              value={ringDice}
+              onChange={(e: any) =>
+                dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
+              }
+            />
+          </Grid>
+        </Grid>
       </InputSection>
       <Button color="success" onClick={() => dispatch({ type: SIMULATE })}>
         Simulate

@@ -98,7 +98,7 @@ export const useRollWorkerWithReducer = (): UseRollWorkerWithReducerReturn => {
       const data = await worker.calculateProbability({
         ringDice: finalRingDice,
         skillDice: finalSkillDice,
-        maxStrife: Number(maxStrife),
+        maxStrife: Number(maxStrife === '∞' ? 'Infinity' : maxStrife),
         tn: Number(tn),
         to: Number(to),
         keep
@@ -142,7 +142,13 @@ export const useRollWorkerWithReducer = (): UseRollWorkerWithReducerReturn => {
     dispatch({ type: UPDATE_TO, payload: e.target.value });
   };
   const updateMaxStrifeHandler = (e: any) => {
-    dispatch({ type: UPDATE_MAX_STRIFE, payload: e.target.value });
+    if (
+      !isNaN(Number(e.target.value)) ||
+      e.target.value === 'Infinity' ||
+      e.target.value === '∞'
+    ) {
+      dispatch({ type: UPDATE_MAX_STRIFE, payload: e.target.value });
+    }
   };
 
   const updateSkilledAssistHandler = () => {

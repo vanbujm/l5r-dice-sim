@@ -86,11 +86,11 @@ export const AverageRoll = () => {
           Try again with smaller numbers.
         </Alert>
       </Snackbar>
-      <Heading type="h3" component="h2">
+      <Heading type="h3" component="h2" style={{ margin: '0 0.5rem' }}>
         Calculate Chances
       </Heading>
       <CalculateChanceForm state={state} handlers={handlers} />
-      <Button color="primary" onClick={handlers.requestCalcHandler}>
+      <Button color="important" onClick={handlers.requestCalcHandler}>
         Simulate
       </Button>
       {CancelButton}

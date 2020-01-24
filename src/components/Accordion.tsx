@@ -1,6 +1,6 @@
-import React, { PropsWithChildren } from 'react';
+import React, { CSSProperties, PropsWithChildren } from 'react';
 import styled from 'styled-components';
-import { darken, desaturate, lighten } from 'polished';
+import { darken, desaturate, lighten, parseToRgb } from 'polished';
 import { ColorPaletteColor } from '../design-system/theme-types';
 
 interface TabLabelProps {
@@ -28,19 +28,26 @@ const TabLabel = styled.label<TabLabelProps>`
   cursor: pointer;
   position: relative;
   
-  ${props =>
-    props.isCard
-      ? `background-color: ${lighten(0.5, props.theme.color[props.color])};
-  box-shadow: inset 0 10px 10px -10px
-    ${lighten(0.3, desaturate(0.05, props.theme.color[props.color]))};
-    `
-      : `
-      background: linear-gradient(
-    145deg,
-    ${lighten(0.1, props.theme.color.light)},
-    ${darken(0.1, props.theme.color.light)}
-  );
-      `}
+  ${props => {
+    const { red, green, blue, alpha } = {
+      ...parseToRgb(props.theme.color[props.color]),
+      alpha: 0.1
+    };
+
+    const cardStyle = `
+    background-image: url('photos_2018_4_23_fst_brown-blank-old-paper.jpg');
+      background-color: rgba(${red}, ${green}, ${blue}, ${alpha});
+      background-blend-mode: overlay;
+      box-shadow: inset 0 10px 10px -10px ${lighten(
+        0.3,
+        desaturate(0.05, props.theme.color[props.color])
+      )};
+    `;
+
+    const normalStyle = `background: ${props.theme.color.light};`;
+
+    return props.isCard ? cardStyle : normalStyle;
+  }}
   color: ${props => darken(0.1, props.theme.color[props.color])};
 
 
@@ -50,7 +57,6 @@ const TabLabel = styled.label<TabLabelProps>`
   &::before {
     content: ' ';
     position: absolute;
-    background-color: transparent;
     width: calc(100% + 4px);
     height: calc(100% + 6px);
     top: -4px;
@@ -109,17 +115,23 @@ const SecreteCheckBox = styled.input<TabLabelProps>`
       border-top: 0px solid black;
       position: relative;
       overflow: unset;
-      
-      //box-shadow:        inset  0 -10px 10px -10px grey;
-      
-      ${props =>
-        props.isCard
-          ? `background-color: ${lighten(0.5, props.theme.color[props.color])};
-  box-shadow: inset 0 -10px 10px
-   -10px
-    ${lighten(0.3, desaturate(0.05, props.theme.color[props.color]))};
-    `
-          : ''}
+      ${props => {
+        const { red, green, blue, alpha } = {
+          ...parseToRgb(props.theme.color[props.color]),
+          alpha: 0.1
+        };
+
+        const cardStyle = `
+        background-image: url('photos_2018_4_23_fst_brown-blank-old-paper.jpg');
+        background-color: rgba(${red}, ${green}, ${blue}, ${alpha});
+        background-blend-mode: overlay;
+        box-shadow: inset 0 -10px 10px
+           -10px
+            ${lighten(0.3, desaturate(0.05, props.theme.color[props.color]))};
+        `;
+
+        return props.isCard ? cardStyle : '';
+      }}
       
       
       &::before {
@@ -137,7 +149,9 @@ const SecreteCheckBox = styled.input<TabLabelProps>`
   }
 `;
 
-interface AccordionProps {}
+interface AccordionProps {
+  style?: CSSProperties;
+}
 
 interface AccordionItemProps {
   id?: string;
@@ -152,16 +166,19 @@ export const AccordionItem: React.FC<PropsWithChildren<AccordionItemProps>> = ({
   id = label,
   color = 'success',
   children
-}) => (
-  <Tab>
-    <SecreteCheckBox color={color} type="checkbox" id={id} isCard={card} />
-    <TabLabel color={color} htmlFor={id} isCard={card}>
-      {label}
-    </TabLabel>
-    <TabContent>{children}</TabContent>
-  </Tab>
-);
+}) => {
+  return (
+    <Tab>
+      <SecreteCheckBox color={color} type="checkbox" id={id} isCard={card} />
+      <TabLabel color={color} htmlFor={id} isCard={card}>
+        {label}
+      </TabLabel>
+      <TabContent>{children}</TabContent>
+    </Tab>
+  );
+};
 
 export const Accordion: React.FC<PropsWithChildren<AccordionProps>> = ({
+  style,
   children
-}) => <TabContainer>{children}</TabContainer>;
+}) => <TabContainer style={style}>{children}</TabContainer>;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { darken, desaturate, lighten } from 'polished';
+import { darken, parseToRgb } from 'polished';
 import { ColorPaletteColor } from '../design-system/theme-types';
 
 interface StyleProps {
@@ -12,10 +12,16 @@ const CardBase = styled.div<StyleProps>`
 
   padding: ${({ theme: { grid } }) => `${grid.spaceM}`};
 
-  background-color: ${props => lighten(0.5, props.theme.color[props.color])};
-  box-shadow: inset 0 0 ${({ theme: { grid } }) => `${grid.spaceM}`}
-    ${({ theme: { grid } }) => `${grid.spaceXs}`}
-    ${props => lighten(0.3, desaturate(0.05, props.theme.color[props.color]))};
+  background-image: url('photos_2018_4_23_fst_brown-blank-old-paper.jpg');
+  background-color: ${props => {
+    const { red, green, blue, alpha } = {
+      ...parseToRgb(props.theme.color[props.color]),
+      alpha: 0.1
+    };
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }};
+  background-blend-mode: overlay;
+
   max-width: ${props => props.theme.breakpoints.m};
   font-weight: bold;
 
@@ -66,7 +72,8 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ContentContainer = styled.div`
-  display: inline-block;
+  display: block;
+  width: 100%;
 `;
 
 export const Card: React.FC<PropsWithChildren<CardProps>> = ({

@@ -45,6 +45,9 @@ html, body {
   font-size: 16px;
   color: ${theme.color.text};
   background-color: ${theme.color.light};
+  background-image: url('5023.png');
+  background-color: ${theme.color.light}
+  background-blend-mode: lighten;
 }
 
 h1 {

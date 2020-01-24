@@ -19,7 +19,8 @@ interface InputContainerProps {
 const InputContainer = styled.div<InputContainerProps>`
   padding: calc(${props => props.theme.grid.spaceS} - 4px)
     ${props => props.theme.grid.spaceS};
-  display: inline-flex;
+  display: flex;
+  flex: 1;
   align-items: center;
   background-color: ${props => darken(0.1, props.theme.color[props.color])};
 
