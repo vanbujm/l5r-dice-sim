@@ -27,7 +27,7 @@ export const AverageRoll = () => {
 
   const CancelButton = state.loading ? (
     <Button
-      color="secondary"
+      color="important"
       onClick={handlers.cancelHandler}
       style={{ marginLeft: '1rem' }}
     >
@@ -38,7 +38,7 @@ export const AverageRoll = () => {
   const ClearButton =
     state.result != null ? (
       <Button
-        color="secondary"
+        color="important"
         onClick={handlers.clearHandler}
         style={{ marginLeft: '1rem' }}
       >
@@ -47,7 +47,7 @@ export const AverageRoll = () => {
     ) : null;
 
   const LoadingBar = state.loading ? (
-    <Box style={{ margin: '1rem 0' }}>
+    <Box style={{ margin: '1rem 0.5rem 0 0.5rem' }}>
       <LinearProgress
         classes={{
           colorPrimary: loadingBarClasses.colorPrimary,
@@ -62,8 +62,8 @@ export const AverageRoll = () => {
 
   const Results = state.result ? (
     <Box style={{ marginTop: '1rem' }}>
-      <Divider />
-      <Box style={{ marginTop: '1rem' }}>
+      <Divider style={{ margin: ' 0 0.5rem' }} />
+      <Box style={{ margin: '1rem 0.5rem 0 0.5rem' }}>
         <ResultTable result={state.result} />
       </Box>
     </Box>
@@ -90,7 +90,7 @@ export const AverageRoll = () => {
         Calculate Chances
       </Heading>
       <CalculateChanceForm state={state} handlers={handlers} />
-      <Button color="important" onClick={handlers.requestCalcHandler}>
+      <Button color="secondary" onClick={handlers.requestCalcHandler}>
         Simulate
       </Button>
       {CancelButton}

@@ -92,7 +92,7 @@ const CenteringDiv = styled.div`
 export const Input: React.FC<PropsWithChildren<InputProps>> = ({
   id,
   label,
-  color = 'flair',
+  color = 'secondary',
   style,
   inputStyles,
   containerStyles,

@@ -78,7 +78,7 @@ const ContentContainer = styled.div`
 
 export const Card: React.FC<PropsWithChildren<CardProps>> = ({
   children,
-  color = 'success'
+  color = 'secondary'
 }) => {
   return (
     <SecreteParent>

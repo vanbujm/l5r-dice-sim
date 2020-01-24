@@ -173,10 +173,10 @@ export const SimulateRoll = () => {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <Input
-              color="info"
               id="simulate-skill-dice"
               label="Skill Dice"
               type="number"
+              color="important"
               value={skillDice}
               onChange={(e: any) =>
                 dispatch({ type: UPDATE_SKILL_DICE, payload: inputHandler(e) })
@@ -188,6 +188,7 @@ export const SimulateRoll = () => {
               id="simulate-ring-dice"
               label="Ring Dice"
               type="number"
+              color="important"
               value={ringDice}
               onChange={(e: any) =>
                 dispatch({ type: UPDATE_RING_DICE, payload: inputHandler(e) })
@@ -196,7 +197,7 @@ export const SimulateRoll = () => {
           </Grid>
         </Grid>
       </InputSection>
-      <Button color="success" onClick={() => dispatch({ type: SIMULATE })}>
+      <Button color="secondary" onClick={() => dispatch({ type: SIMULATE })}>
         Simulate
       </Button>
       {result !== null ? (

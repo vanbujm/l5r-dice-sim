@@ -63,7 +63,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
             label="Skill Dice"
             type="number"
             value={skillDice}
-            color="info"
             onChange={updateSkillDiceHandler}
           />
         </Grid>
@@ -73,7 +72,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
             label="Ring Dice"
             type="number"
             value={ringDice}
-            color="flair"
             onChange={updateRingDiceHandler}
           />
         </Grid>
@@ -85,7 +83,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
             label="Target Success"
             type="number"
             value={tn}
-            color="error"
             onChange={updateTnHandler}
           />
         </Grid>
@@ -95,13 +92,12 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
             label="Target Opportunity"
             type="number"
             value={to}
-            color="success"
             onChange={updateToHandler}
           />
         </Grid>
       </Grid>
       <Accordion style={{ margin: '1rem 0.5rem' }}>
-        <AccordionItem label="Advanced Options" color="info" card>
+        <AccordionItem label="Advanced Options" color="secondary" card>
           <Grid container spacing={0}>
             <Grid item xs={12} style={{ paddingBottom: '0' }}>
               <Grid item xs={6}>
@@ -110,7 +106,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
                   id="maximum-strife"
                   label="Maximum Strife"
                   value={maxStrife}
-                  color="important"
                   onChange={updateMaxStrifeHandler}
                   aside={
                     <InfinityButton
@@ -119,7 +114,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
                           target: { value: 'Infinity' }
                         })
                       }
-                      color="important"
                     >
                       ∞
                     </InfinityButton>
@@ -134,7 +128,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
                 label="Skilled Assist"
                 checked={skilledAssist}
                 onChange={updateSkilledAssistHandler}
-                color="success"
               />
             </Grid>
             <Grid item xs={6}>
@@ -144,7 +137,6 @@ export const CalculateChanceForm: React.FC<CalculateChancesFormProps> = ({
                 label="UnSkilled Assist"
                 checked={unskilledAssist}
                 onChange={updateUnskilledAssistHandler}
-                color="error"
               />
             </Grid>
           </Grid>
