@@ -130,7 +130,7 @@ export const Checkbox: React.FC<PropsWithChildren<InputProps>> = ({
   id,
   label,
   checked,
-  color = 'flair',
+  color = 'secondary',
   style,
   ...props
 }) => {
