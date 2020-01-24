@@ -31,15 +31,12 @@ const Nav = styled.nav`
     background-size: 120%;
   }
   @media screen and (max-width: ${props => props.theme.breakpoints.m}) {
-    background-size: 140%;
+    background-size: 130%;
   }
   @media screen and (max-width: ${props => props.theme.breakpoints.s}) {
-    background-size: 190%;
+    background-size: 300%;
   }
   @media screen and (max-width: ${props => props.theme.breakpoints.xs}) {
-    background-size: 350%;
-  }
-  @media screen and (max-width: ${props => props.theme.breakpoints.xxs}) {
     background-size: 400%;
   }
 `;
