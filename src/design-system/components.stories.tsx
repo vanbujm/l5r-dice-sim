@@ -49,7 +49,6 @@ export const Inputs = () => (
   <ComponentContainer>
     <Input label="String Input" />
     <Input label="String Input" color="important" />
-    <Input label="String Input" color="success" />
     <Input label="Number Input" type="number" color="info" />
     <Checkbox label="Checkbox" id="testCheckbox" />
   </ComponentContainer>
