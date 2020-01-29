@@ -82,11 +82,11 @@ export const Accordions = () => (
       </AccordionItem>
     </Accordion>
     <Accordion>
-      <AccordionItem label="Accordion Item 1" color="important">
-        <Text color="important">Hidden accordion text 1</Text>
+      <AccordionItem label="Accordion Item 3" color="important">
+        <Text color="important">Hidden accordion text 3</Text>
       </AccordionItem>
-      <AccordionItem label="Accordion Item 2" color="important">
-        <Text color="important">Hidden accordion text 2</Text>
+      <AccordionItem label="Accordion Item 4" color="important">
+        <Text color="important">Hidden accordion text 4</Text>
       </AccordionItem>
     </Accordion>
   </ComponentContainer>
