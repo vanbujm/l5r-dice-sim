@@ -95,10 +95,13 @@ export const useRollWorkerWithReducer = (): UseRollWorkerWithReducerReturn => {
         Number(ringDice) + (skilledAssist ? 1 : 0) + (unskilledAssist ? 1 : 0);
       const finalRingDice = Number(ringDice) + (unskilledAssist ? 1 : 0);
       const finalSkillDice = Number(skillDice) + (skilledAssist ? 1 : 0);
+
+      const formattedMaxStrife = Number.isNaN(Number(maxStrife)) ? Infinity : Number(maxStrife);
+
       const data = await worker.calculateProbability({
         ringDice: finalRingDice,
         skillDice: finalSkillDice,
-        maxStrife: Number(maxStrife === '∞' ? 'Infinity' : maxStrife),
+        maxStrife: formattedMaxStrife,
         tn: Number(tn),
         to: Number(to),
         keep
