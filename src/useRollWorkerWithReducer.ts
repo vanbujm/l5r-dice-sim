@@ -142,13 +142,7 @@ export const useRollWorkerWithReducer = (): UseRollWorkerWithReducerReturn => {
     dispatch({ type: UPDATE_TO, payload: e.target.value });
   };
   const updateMaxStrifeHandler = (e: any) => {
-    if (
-      !isNaN(Number(e.target.value)) ||
-      e.target.value === 'Infinity' ||
-      e.target.value === '∞'
-    ) {
-      dispatch({ type: UPDATE_MAX_STRIFE, payload: e.target.value });
-    }
+    dispatch({ type: UPDATE_MAX_STRIFE, payload: e.target.value });
   };
 
   const updateSkilledAssistHandler = () => {
